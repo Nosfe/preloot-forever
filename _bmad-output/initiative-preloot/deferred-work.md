@@ -1,0 +1,3 @@
+- source_plan: `_bmad-output/initiative-preloot/epic-platform-baseline/story-run-folders-full-settings-and-resume-plan.md`
+  summary: Resume the latest run for a Target Phase when every setting but run_id matches, instead of always starting a new run (epic-platform-baseline entry 6, R3 resume part; CAP-9).
+  evidence: Split from story 1.6 at the user's request because the plan was about 1,800 tokens. Checked design to reuse: compare against the latest runs/<phase>/<run_id>/ that holds settings.json, excluding run_id and issues. Print `resumed <path>` or `new <path>`. A corrupt latest settings.json exits 1. Folders without settings are ignored. Entry 7's stage-skip depends on resume to be useful.

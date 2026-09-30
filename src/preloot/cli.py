@@ -6,6 +6,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from preloot import __version__
+from preloot.io.artifacts import ArtifactError, write_artifact
+from preloot.models.phases import PHASES, previous_phase
 from preloot.models.settings import Settings
 from preloot.models.wowsims import WOWSIMS_VERSION
 from preloot.wowsimcli import WowsimcliError, bundled_version
@@ -15,13 +17,27 @@ def _utc_run_id() -> str:
     return datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
 
 
-def _run_command(workspace: Path, phase: str) -> int:
-    run_dir = workspace / "runs" / phase / _utc_run_id()
+# Every phase after the first has a Previous Phase to baseline against.
+RUN_PHASE_CHOICES: tuple[str, ...] = tuple(phase.id for phase in PHASES[1:])
+
+
+def _run_command(workspace: Path, phase: str, seed: int) -> int:
+    run_id = _utc_run_id()
+    run_dir = workspace / "runs" / phase / run_id
     run_dir.mkdir(parents=True, exist_ok=True)
 
-    settings = Settings(target_phase=phase)
+    settings = Settings(
+        run_id=run_id,
+        target_phase=phase,
+        previous_phase=previous_phase(phase).id,
+        seed=seed,
+    )
     settings_path = run_dir / "settings.json"
-    settings_path.write_text(settings.model_dump_json(indent=2), encoding="utf-8")
+    try:
+        write_artifact(settings_path, settings)
+    except ArtifactError as exc:
+        print(str(exc), file=sys.stderr)
+        return 1
 
     print(settings_path)
     return 0
@@ -52,7 +68,8 @@ def _build_parser() -> argparse.ArgumentParser:
 
     run_parser = subparsers.add_parser("run")
     run_parser.add_argument("--workspace", required=True)
-    run_parser.add_argument("--phase", required=True)
+    run_parser.add_argument("--phase", required=True, choices=RUN_PHASE_CHOICES)
+    run_parser.add_argument("--seed", type=int, default=1)
 
     subparsers.add_parser("version")
     return parser
@@ -63,7 +80,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     if args.command == "run":
-        return _run_command(Path(args.workspace), args.phase)
+        return _run_command(Path(args.workspace), args.phase, args.seed)
 
     if args.command == "version":
         return _version_command()
