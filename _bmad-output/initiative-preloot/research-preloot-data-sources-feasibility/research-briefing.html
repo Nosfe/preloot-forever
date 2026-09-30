@@ -1,0 +1,234 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>technical research: Preloot data sources feasibility</title>
+<style>
+:root{--bg:#fff;--fg:#1d2127;--mut:#5b6470;--line:#e3e6ea;--card:#f6f8fa;--acc:#2f6fdf}
+@media (prefers-color-scheme:dark){:root{--bg:#14171b;--fg:#e6e9ed;--mut:#9aa3ad;--line:#2a2f36;--card:#1b1f24;--acc:#7aa7ff}}
+*{box-sizing:border-box}body{margin:0;font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--fg)}
+header{padding:2rem 1.25rem 1rem;border-bottom:1px solid var(--line);max-width:1100px;margin:auto}
+header h1{margin:.2rem 0;font-size:1.6rem}.meta{color:var(--mut);font-size:.9rem}
+.wrap{display:grid;grid-template-columns:230px 1fr;gap:2rem;max-width:1100px;margin:auto;padding:1rem 1.25rem 4rem}
+nav{position:sticky;top:1rem;align-self:start;font-size:.9rem}nav ul{list-style:none;padding:0;margin:0}nav li{margin:.35rem 0}
+nav a{color:var(--mut);text-decoration:none}nav a:hover{color:var(--acc)}
+@media (max-width:800px){.wrap{grid-template-columns:1fr}nav{position:static}}
+h2{margin-top:2.2rem;padding-top:.5rem;border-top:1px solid var(--line)}
+h2#executive-summary{border:0;margin-top:0}
+main>h2#executive-summary+p,main>h2#executive-summary~ol:first-of-type{background:var(--card)}
+table{border-collapse:collapse;width:100%;font-size:.88rem;display:block;overflow-x:auto}
+th,td{border:1px solid var(--line);padding:.4rem .55rem;vertical-align:top;text-align:left}th{background:var(--card)}
+code{background:var(--card);padding:.05rem .3rem;border-radius:4px;font-size:.88em}
+a{color:var(--acc)}a.cite{font-size:.8em;text-decoration:none;vertical-align:super}
+.b{display:inline-block;padding:0 .45rem;border-radius:999px;font-size:.78em;font-weight:600;border:1px solid}
+.b-unv{background:#fde8e8;color:#9b1c1c;border-color:#e02424;font-weight:700}
+.b-low{background:#fff1e6;color:#8a3b00;border-color:#ff8a4c}
+.b-med{background:#fdf6b2;color:#723b13;border-color:#c27803}
+.b-high{background:transparent;color:#046c4e;border-color:#31c48d;font-weight:500}
+details{margin-top:2.2rem;border-top:1px solid var(--line);padding-top:.5rem}summary{cursor:pointer;font-size:1.4rem;font-weight:700}
+</style></head><body>
+<header><div class="meta">technical research &middot; 2026-09-29 &middot; preset standard &middot; validation normal &middot; claims: 3 verified / 11 <span class="b b-unv">unverified</span></div>
+<h1>Preloot data sources feasibility</h1><div class="meta"><strong>Decision:</strong> Can a loot-priority app for TBC Classic/Anniversary (WoW Forever later) be built on wowtbc.gg BiS lists, the wowsims engine, and Wowhead loot tables — and how should each be integrated?</div></header>
+<div class="wrap"><nav><ul><li><a href="#executive-summary">Executive summary</a></li><li><a href="#1-bis-data-wowtbcgg">1. BiS data: wowtbc.gg</a></li><li><a href="#2-sim-engine-wowsims">2. Sim engine: wowsims</a></li><li><a href="#3-loot-tables">3. Loot tables</a></li><li><a href="#4-player-gear-input-and-existing-tools">4. Player gear input and existing tools</a></li><li><a href="#cross-dimension-insights">Cross-dimension insights</a></li><li><a href="#recommendations">Recommendations</a></li><li><a href="#open-questions">Open questions</a></li><li><a href="#appendix">Source appendix</a></li><li><a href="#staleness-map">Staleness map</a></li></ul></nav><main>
+<p><strong>Decision this research serves:</strong> Can a loot-priority app for TBC Classic/Anniversary (WoW Forever later) be built on wowtbc.gg BiS lists, the wowsims engine, and Wowhead loot tables — and how should each be integrated?</p>
+<h2 id="executive-summary">Executive summary</h2>
+<p><strong>Verdict: feasible for TBC Anniversary. Swap one of the three sources: use the wowsims item database for loot tables instead of Wowhead.</strong></p>
+<ol>
+<li><strong>Don't use Wowhead as a data source.</strong> Its terms forbid automated access, data mining, derivative works and any commercial or third-party use <a class="cite" href="#src-21">[21]</a>. The wowsims item database (MIT) carries its own loot data: 8,256 items, 2,352 of them with a drop source (<code>npcId</code>, <code>zoneId</code>), plus phase numbers and NPC/zone tables <a class="cite" href="#src-15">[15]</a><a class="cite" href="#src-14">[14]</a>. On the one item spot-checked it matches Wowhead's drop data <a class="cite" href="#src-17">[17]</a>. Equivalence across the whole dataset is not yet verified.</li>
+<li><strong>wowtbc.gg BiS data is machine-readable.</strong> Each spec page is backed by a Gatsby <code>page-data.json</code> holding per-phase BiS flags (<code>pre-bis/t4/t5/t6/za/swp</code>), a numeric <code>value</code> score, the boss and the drop chance <a class="cite" href="#src-2">[2]</a>. It carries no reliable item IDs: only 170 of 448 gear entries link to an item ID. The site publishes no reuse licence, so ask permission before redistributing its data <a class="cite" href="#src-3">[3]</a>.</li>
+<li><strong>The engine to use is <code>wowsims/tbc-new</code>, not <code>wowsims/tbc</code>.</strong> The old repo is deprecated <a class="cite" href="#src-7">[7]</a>. tbc-new is actively maintained (144 releases, a commit on the day of access), MIT-licensed with an attribution request, and ships a local HTTP API with raid sim, stat weights and bulk (gear-candidate) sim endpoints <a class="cite" href="#src-8">[8]</a><a class="cite" href="#src-10">[10]</a><a class="cite" href="#src-11">[11]</a>. Every class has a registered sim, and all four tanks and four healers are registered. Some specs are merged, for example one <code>hunter</code> and one <code>dps_warrior</code>. The whole sim is labelled <strong>Alpha</strong>, and healer support was only recently ported <a class="cite" href="#src-12">[12]</a><a class="cite" href="#src-13">[13]</a>.</li>
+</ol>
+<p><strong>Biggest caveat:</strong> simmed "upgrade value" is solid for DPS specs and weak for healers and tanks. The priority model has to blend three inputs: sim value, BiS list position, and class/role weights. For WoW Forever, no wowsims support was found <a class="cite" href="#src-8">[8]</a>. No Blizzard API was found either: the only evidence is a low-confidence community reply <a class="cite" href="#src-30">[30]</a>. Addons there are reportedly restricted <a class="cite" href="#src-24">[24]</a>, and its BiS lists are unranked <a class="cite" href="#src-4">[4]</a>. Support for it has to be designed as a BiS-only mode.</p>
+<h2 id="1-bis-data-wowtbcgg">1. BiS data: wowtbc.gg</h2>
+<ul>
+<li><strong>Location:</strong> TBC Classic BiS lists live at <code>/bis-list/{spec}-{class}/</code>. No separate "Anniversary" section was found. The phase is not in the URL, and phase switching appears to happen in the browser <span class="b b-med">medium confidence</span> <a class="cite" href="#src-1">[1]</a>.</li>
+<li><strong>Data file:</strong> the real data is <code>/page-data/bis-list/{spec}-{class}/page-data.json</code>, referenced from the page HTML <a class="cite" href="#src-1">[1]</a>. The Fury Warrior file is about 659 KB <a class="cite" href="#src-2">[2]</a>:</li>
+<li><code>bisList</code>: 373 entries for Fury Warrior. Each has <code>name</code>, <code>slot</code>, <code>phase</code>, per-phase <code>{bis: bool}</code> flags for <code>pre-bis, t4, t5, t6, za, swp</code>, <code>value</code>/<code>final_value</code> (a numeric score; sorting by it gives a plausible within-slot ranking, but its meaning isn't published), <code>source</code> (instance), <code>source_type</code> (boss), <code>drop_chance</code>, <code>alternative</code> and <code>classic</code>.</li>
+<li><code>gearData</code>: 448 entries with full stats. Only 170 have a <code>url</code> of the form <code>https://tbcdb.com/?item=&lt;id&gt;</code>, so <strong>names must be mapped to item IDs</strong>. An exact name match against the wowsims database is the obvious route.</li>
+<li><strong>Rendered HTML:</strong> item names are plain <code>div</code>s, with no Wowhead links or <code>data-*</code> IDs <a class="cite" href="#src-1">[1]</a>.</li>
+<li><strong>Reuse terms:</strong> robots.txt and sitemap.xml returned Not Found <span class="b b-med">medium confidence</span> <a class="cite" href="#src-32">[32]</a>. The only legal page found is a privacy policy from 2021, which mentions "Terms and Conditions" that could not be found anywhere on the site <a class="cite" href="#src-3">[3]</a>. The site invites lists that "sim better" and updates them "after testing", without describing its method <a class="cite" href="#src-1">[1]</a>.</li>
+<li><strong>WoW Forever:</strong> lists exist at <code>/warcraftforever/bis-list/</code>, but they are <strong>unranked</strong>: "Items are not in order". There are no phases, dungeon loot tables are provisional, and there are no raid loot tables <a class="cite" href="#src-4">[4]</a><a class="cite" href="#src-5">[5]</a><a class="cite" href="#src-6">[6]</a>.</li>
+</ul>
+<h2 id="2-sim-engine-wowsims">2. Sim engine: wowsims</h2>
+<ul>
+<li><strong>Which repo:</strong> <code>wowsims/tbc</code> is "not maintained nor monitored" <a class="cite" href="#src-7">[7]</a>. Anniversary is supported in <code>wowsims/tbc-new</code>, a fork of the MoP sim with 144 releases and a commit on the day of access <a class="cite" href="#src-8">[8]</a>.</li>
+<li><strong>Headless options</strong> <a class="cite" href="#src-9">[9]</a><a class="cite" href="#src-10">[10]</a><a class="cite" href="#src-11">[11]</a>:</li>
+<li><code>wowsimcli sim --infile &lt;RaidSimRequest protojson&gt;</code> runs a raid sim only.</li>
+<li>The native binary (<code>sim/web</code>, default <code>localhost:3333</code>) accepts protobuf POSTs to <code>/raidSim</code>, <code>/computeStats</code>, <code>/statWeights</code>, <code>/bulkSimAsync</code>, <code>/asyncProgress</code> and more.</li>
+<li>A WASM build exists, and the Go packages can be imported as a library.</li>
+<li><strong>Upgrade analysis:</strong> <code>BulkSimRequest</code> takes a baseline plus <code>BulkGearCandidate</code>s and returns each candidate's DPS distribution and paired error against the baseline <a class="cite" href="#src-11">[11]</a>. So "upgrade value per item per raider" can come from bulk sims. It can also come from paired <code>RaidSimRequest</code>s with a fixed seed. Bulk results expose only <code>dps_metrics</code>.</li>
+<li><strong>Stat weights:</strong> <code>StatWeightsResult</code> covers <code>dps</code>, <code>hps</code>, <code>tps</code>, <code>dtps</code>, <code>tmi</code> and <code>p_death</code>, which gives a cheaper EP-based fallback for tanks and healers <a class="cite" href="#src-11">[11]</a>.</li>
+<li><strong>Spec coverage:</strong> every class is registered, some as merged specs (<code>hunter</code>, <code>mage</code>, <code>rogue</code>, <code>warlock</code>, <code>dps_warrior</code>, <code>dps_priest</code>). Feral bear, protection paladin, protection warrior and all four healers are registered. The most recent change ported healers as "gear planners", and every class shows "Alpha" on wowsims.com/tbc <a class="cite" href="#src-12">[12]</a><a class="cite" href="#src-13">[13]</a>.</li>
+<li><strong>Gear input:</strong> the WowSimsExporter addon (MIT) supports TBC via <code>/wse export</code> and has item fields <code>id</code>, <code>enchant</code>, <code>random_suffix</code> and <code>gems</code> <a class="cite" href="#src-16">[16]</a>. Whether its output matches the sim's <code>EquipmentSpec</code> is <strong><span class="b b-unv">unverified</span></strong>: neither the exporter's JSON output nor <code>EquipmentSpec</code>'s fields were read.</li>
+<li><strong>WoW Forever:</strong> an org-wide code search found no support <a class="cite" href="#src-8">[8]</a>.</li>
+</ul>
+<h2 id="3-loot-tables">3. Loot tables</h2>
+<ul>
+<li><strong>Wowhead:</strong> the <code>&amp;xml</code> endpoint does return drop data, e.g. <code>sourcemore: {n:"Gruul the Dragonkiller", ti:19044, z:3923}</code> <a class="cite" href="#src-17">[17]</a>. The tooltip JSON has no source data <a class="cite" href="#src-18">[18]</a>, and zone pages list drops <a class="cite" href="#src-19">[19]</a>. robots.txt blocks AI and scraper bots entirely and blocks <code>/search</code> and <code>/list</code> for everyone else <a class="cite" href="#src-20">[20]</a>. <strong>The ZAM terms forbid spiders and data-mining tools, derivative works, and any commercial or third-party use</strong> <a class="cite" href="#src-21">[21]</a>. Treat Wowhead as a reference for humans only (tooltips and links), not a data feed.</li>
+<li><strong>wowsims <code>db.json</code></strong> <a class="cite" href="#src-15">[15]</a>:</li>
+<li>8,256 items, 2,352 with <code>sources[].drop {npcId, zoneId, difficulty}</code> (schema in <code>proto/ui.proto</code> <a class="cite" href="#src-14">[14]</a>), plus <code>phase</code>, <code>npcs</code> (509), <code>zones</code> (74) and <code>encounters</code>.</li>
+<li>Spot check on one item: Dragonspine Trophy maps to npc 19044, zone 3923 in both wowsims and Wowhead <a class="cite" href="#src-17">[17]</a>. AtlasLoot lists it under Gruul <a class="cite" href="#src-22">[22]</a>.</li>
+<li>The database was last updated about a week before access, with Anniversary phase curation ("Battlemaster trinkets in Phase 3") <a class="cite" href="#src-8">[8]</a>. The refresh cadence and upstream source are unknown.</li>
+<li><strong>AtlasLootClassic</strong> (GPL-2.0) <a class="cite" href="#src-22">[22]</a>:</li>
+<li>Lua tables per raid and boss, with <code>npcID</code>, item IDs, tier tokens, trash lists and <code>ContentPhaseBC</code> tags.</li>
+<li>Last release 3 years ago, so it's useful as a cross-check or boss-ordering source, not as the primary feed.</li>
+<li>Its GPL licence would affect distribution if its data were bundled.</li>
+<li><strong>Current tier:</strong> Anniversary Phase 3 (Hyjal and Black Temple) went live on 2026-08-27. Phase 4 (Zul'Aman) and Phase 5 (Sunwell) are expected in "autumn" 2026 <a class="cite" href="#src-23">[23]</a><a class="cite" href="#src-24">[24]</a>. This comes from Wowhead's roadmap, not an official Blizzard source.</li>
+</ul>
+<h2 id="4-player-gear-input-and-existing-tools">4. Player gear input and existing tools</h2>
+<ul>
+<li><strong>Gear input:</strong> WowSimsExporter is the best fit for per-raider gear, and it can also export an inspected target <a class="cite" href="#src-16">[16]</a>. The Blizzard Classic Profile API exists, but equipment data for Anniversary realms isn't confirmed, and API data may carry a 30-day retention rule. That second point comes from a user paraphrase and wasn't verified <a class="cite" href="#src-29">[29]</a><a class="cite" href="#src-31">[31]</a>.</li>
+<li><strong>That's My BIS (TMB):</strong> already runs wishlists, prio lists, attendance and loot history, and claims support for TBC and Forever <a class="cite" href="#src-33">[33]</a><a class="cite" href="#src-25">[25]</a>. It requires Discord, and no public source code was found <a class="cite" href="#src-25">[25]</a>.</li>
+<li><strong>Gargul:</strong> an actively maintained in-game loot distribution addon. It imports TMB exports (base64 + zlib JSON keyed by item ID), a <strong>simple CSV prio format</strong> (<code>itemId,player1<a class="cite" href="#src-1">[1]</a>,player2<a class="cite" href="#src-2">[2]</a></code>), softres.it and DFT <a class="cite" href="#src-26">[26]</a>. It is source-visible but "all rights reserved".</li>
+<li><strong>RCLootCouncil Classic</strong> (GPL-3.0) and <strong>softres.it</strong> cover council and soft-reserve workflows. Their import formats weren't verified <a class="cite" href="#src-27">[27]</a><a class="cite" href="#src-28">[28]</a>.</li>
+</ul>
+<h2 id="cross-dimension-insights">Cross-dimension insights</h2>
+<ul>
+<li><strong>wowsims covers two of your three sources.</strong> Its item database replaces Wowhead for loot tables, and its engine provides upgrade values. Both share one ID space and one licence (MIT). wowtbc.gg becomes the only external source, and the name-to-ID mapping into wowsims items is the single integration seam.</li>
+<li><strong>Each input has a different reliability, so they should feed a weighted blend, not a single score.</strong> wowtbc.gg <code>value</code> scores give a free per-spec ranking that works for every spec, healers and tanks included. wowsims bulk sims give per-raider precision but are Alpha, and they measure DPS only.</li>
+<li><strong>Output should be a Gargul-compatible CSV or TMB-shaped prio list rather than a new in-game tool.</strong> That puts the app upstream of Gargul/TMB, where the distribution tooling already exists <a class="cite" href="#src-25">[25]</a><a class="cite" href="#src-26">[26]</a>.</li>
+<li><strong>WoW Forever needs a different design.</strong> No sim was found <a class="cite" href="#src-8">[8]</a>, no API was found <span class="b b-low">low confidence</span> <a class="cite" href="#src-30">[30]</a>, addons are reportedly restricted <a class="cite" href="#src-24">[24]</a>, and BiS lists are unranked <a class="cite" href="#src-4">[4]</a>. A Forever mode can only use a BiS whitelist plus manual weights, so keep the data-source layer pluggable.</li>
+</ul>
+<h2 id="recommendations">Recommendations</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Recommendation</th>
+<th>Feeds</th>
+<th>Confidence basis</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>R1</td>
+<td>Use the wowsims <code>tbc-new</code> <code>db.json</code> as the loot-table and item-ID source. Pin it to a release tag and refresh it each phase.</td>
+<td>PRD data sources; architecture constraint</td>
+<td><span class="b b-high">High</span> on content (direct download <a class="cite" href="#src-15">[15]</a>); medium on completeness (one item cross-checked against Wowhead <a class="cite" href="#src-17">[17]</a>). Do a raid-wide diff before relying on it</td>
+</tr>
+<tr>
+<td>R2</td>
+<td>Don't scrape or bundle Wowhead data. Only link or tooltip to Wowhead in the UI.</td>
+<td>PRD non-functional (legal)</td>
+<td><span class="b b-high">High</span>: primary terms text <a class="cite" href="#src-21">[21]</a></td>
+</tr>
+<tr>
+<td>R3</td>
+<td>Pull wowtbc.gg <code>page-data.json</code> per spec and map names to wowsims IDs. Email wowtbc.gg@gmail.com for permission to reuse the data, and fall back to manual or curated BiS lists if refused.</td>
+<td>PRD data sources; open risk</td>
+<td><span class="b b-high">High</span> on format <a class="cite" href="#src-2">[2]</a>; the legal position is <strong><span class="b b-unv">unverified</span></strong> <a class="cite" href="#src-3">[3]</a></td>
+</tr>
+<tr>
+<td>R4</td>
+<td>Run <code>tbc-new</code> locally (HTTP API or Go library) and use bulk sim for DPS upgrade values. Use stat-weight EP (hps/tps) for healers and tanks. Show a visible link back to wowsims.</td>
+<td>Architecture spine</td>
+<td><span class="b b-med">Medium</span>: API evidenced in source code <a class="cite" href="#src-10">[10]</a><a class="cite" href="#src-11">[11]</a>; the sim is Alpha and healer maturity is <span class="b b-unv">unverified</span> <a class="cite" href="#src-12">[12]</a><a class="cite" href="#src-13">[13]</a></td>
+</tr>
+<tr>
+<td>R5</td>
+<td>Priority = weighted blend of (a) BiS phase flag and value rank, (b) per-raider sim or EP delta, (c) class/role rules, all tunable by officers.</td>
+<td>PRD core requirement</td>
+<td><span class="b b-med">Medium</span>: follows from the coverage gaps above</td>
+</tr>
+<tr>
+<td>R6</td>
+<td>Take raider gear from WowSimsExporter pastes. Export results as Gargul CSV (and optionally TMB-compatible).</td>
+<td>PRD input/output; UX</td>
+<td><span class="b b-med">Medium</span> for the Gargul CSV (format in code <a class="cite" href="#src-26">[26]</a>); low for exporter parsing (only field layout seen, JSON output unread <a class="cite" href="#src-16">[16]</a>); TMB import <span class="b b-unv">unverified</span></td>
+</tr>
+<tr>
+<td>R7</td>
+<td>Scope v1 to TBC Anniversary with the current tier (P3, rolling to P4/P5). Keep data sources behind an interface so WoW Forever can be a BiS-only mode later.</td>
+<td>PRD scope; architecture</td>
+<td><span class="b b-med">Medium</span>: schedule from Wowhead, not Blizzard <a class="cite" href="#src-23">[23]</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="open-questions">Open questions</h2>
+<ul>
+<li><strong>wowtbc.gg reuse permission.</strong> Needs an email to the operator <a class="cite" href="#src-3">[3]</a>.</li>
+<li><strong>Exact <code>EquipmentSpec</code>/<code>ItemSpec</code> fields and the WowSimsExporter JSON shape.</strong> Answer by reading <code>proto/common.proto</code> and <code>exporter/ExportStructures/</code> <a class="cite" href="#src-11">[11]</a><a class="cite" href="#src-16">[16]</a>.</li>
+<li><strong>Whether bulk sim works for healer and tank specs, and whether healer HPS sims are meaningful.</strong> Needs a test run of <code>tbc-new</code> with a healer profile <a class="cite" href="#src-12">[12]</a>.</li>
+<li><strong>What wowtbc.gg's <code>value</code>/<code>final_value</code> scores mean</strong> (EP? sim DPS?). Not published. Needs a question to the operator or a correlation check against wowsims EP <a class="cite" href="#src-1">[1]</a><a class="cite" href="#src-2">[2]</a>.</li>
+<li><strong>Whether the Blizzard Classic Profile API returns equipment for Anniversary realms, and its retention terms.</strong> Needs the rendered docs and a test token <a class="cite" href="#src-29">[29]</a><a class="cite" href="#src-31">[31]</a>.</li>
+<li><strong>Whether TMB can import prio lists, or only export them.</strong> Needs the TMB wiki <a class="cite" href="#src-25">[25]</a>.</li>
+</ul>
+<details id="appendix" open><summary>Source appendix</summary><table class="sources"><tbody><tr id="src-1"><td>[1]</td><td>BiS URL structure, phase dropdown, community-submitted lists, raw HTML (no IDs, page-data reference)</td><td><a href="https://wowtbc.gg/bis-list/fury-warrior/" target="_blank" rel="noopener">WOWTBC.GG – Fury Warrior BiS</a></td><td>unknown</td><td>2026-09-29</td><td>high</td></tr><tr id="src-2"><td>[2]</td><td>page-data.json fields, per-phase flags, value scores, 170/448 IDs, file size</td><td><a href="https://wowtbc.gg/page-data/bis-list/fury-warrior/page-data.json" target="_blank" rel="noopener">WOWTBC.GG – page-data.json</a></td><td>unknown</td><td>2026-09-29</td><td>high</td></tr><tr id="src-3"><td>[3]</td><td>No reuse licence; privacy policy only</td><td><a href="https://wowtbc.gg/privacy/" target="_blank" rel="noopener">WOWTBC.GG – Privacy</a></td><td>2021-03-01</td><td>2026-09-29</td><td>high</td></tr><tr id="src-4"><td>[4]</td><td>WoW Forever BiS lists unranked</td><td><a href="https://wowtbc.gg/warcraftforever/bis-list/fire-mage/" target="_blank" rel="noopener">WOWTBC.GG – Forever Fire Mage</a></td><td>unknown</td><td>2026-09-29</td><td>high</td></tr><tr id="src-5"><td>[5]</td><td>WoW Forever dungeon loot provisional, no raid tables</td><td><a href="https://wowtbc.gg/warcraftforever/loot-tables/dungeons/the-deadmines/" target="_blank" rel="noopener">WOWTBC.GG – Forever Deadmines loot</a></td><td>unknown</td><td>2026-09-29</td><td>high</td></tr><tr id="src-6"><td>[6]</td><td>Site now leads with WoW Forever</td><td><a href="https://wowtbc.gg/" target="_blank" rel="noopener">WOWTBC.GG – Home</a></td><td>2026-09-15</td><td>2026-09-29</td><td>high</td></tr><tr id="src-7"><td>[7]</td><td>wowsims/tbc deprecated, points to tbc-new</td><td><a href="https://github.com/wowsims/tbc" target="_blank" rel="noopener">wowsims/tbc</a></td><td>~2026-07</td><td>2026-09-29</td><td>high</td></tr><tr id="src-8"><td>[8]</td><td>tbc-new maintained, MIT + attribution, last db update, no Forever (org search)</td><td><a href="https://github.com/wowsims/tbc-new" target="_blank" rel="noopener">wowsims/tbc-new</a></td><td>2026-09-29</td><td>2026-09-29</td><td>high</td></tr><tr id="src-9"><td>[9]</td><td>wowsimcli raid-sim only</td><td><a href="https://github.com/wowsims/tbc-new/blob/master/cmd/wowsimcli/cmd/basic_sim.go" target="_blank" rel="noopener">tbc-new basic_sim.go</a></td><td>2026-03</td><td>2026-09-29</td><td>high</td></tr><tr id="src-10"><td>[10]</td><td>HTTP protobuf API endpoints</td><td><a href="https://github.com/wowsims/tbc-new/blob/master/sim/web/main.go" target="_blank" rel="noopener">tbc-new sim/web/main.go</a></td><td>2026-09</td><td>2026-09-29</td><td>high</td></tr><tr id="src-11"><td>[11]</td><td>RaidSim, BulkSim, StatWeights messages</td><td><a href="https://github.com/wowsims/tbc-new/blob/master/proto/api.proto" target="_blank" rel="noopener">tbc-new proto/api.proto</a></td><td>unknown</td><td>2026-09-29</td><td>high</td></tr><tr id="src-12"><td>[12]</td><td>All specs registered; healers ported as gear planners</td><td><a href="https://github.com/wowsims/tbc-new/blob/master/sim/register_all.go" target="_blank" rel="noopener">tbc-new register_all.go</a></td><td>2026-09</td><td>2026-09-29</td><td>high / low (healer maturity)</td></tr><tr id="src-13"><td>[13]</td><td>All classes labelled Alpha</td><td><a href="https://wowsims.com/tbc/" target="_blank" rel="noopener">wowsims.com/tbc</a></td><td>unknown</td><td>2026-09-29</td><td>high</td></tr><tr id="src-14"><td>[14]</td><td>UIItem/DropSource schema</td><td><a href="https://github.com/wowsims/tbc-new/blob/master/proto/ui.proto" target="_blank" rel="noopener">tbc-new proto/ui.proto</a></td><td>unknown</td><td>2026-09-29</td><td>high</td></tr><tr id="src-15"><td>[15]</td><td>db.json counts, populated drop sources</td><td><a href="https://raw.githubusercontent.com/wowsims/tbc-new/master/assets/database/db.json" target="_blank" rel="noopener">tbc-new db.json</a></td><td>2026-09</td><td>2026-09-29</td><td>high</td></tr><tr id="src-16"><td>[16]</td><td>WowSimsExporter TBC support and ItemSpec fields</td><td><a href="https://github.com/wowsims/exporter" target="_blank" rel="noopener">wowsims/exporter</a></td><td>2026-08</td><td>2026-09-29</td><td>medium</td></tr><tr id="src-17"><td>[17]</td><td>Wowhead XML with sourcemore drop data</td><td><a href="https://www.wowhead.com/tbc/item=28830&amp;xml" target="_blank" rel="noopener">Wowhead item 28830 XML</a></td><td>unknown</td><td>2026-09-29</td><td>high</td></tr><tr id="src-18"><td>[18]</td><td>Tooltip JSON lacks sources</td><td><a href="https://nether.wowhead.com/tbc/tooltip/item/28830" target="_blank" rel="noopener">Wowhead tooltip API</a></td><td>unknown</td><td>2026-09-29</td><td>high</td></tr><tr id="src-19"><td>[19]</td><td>Zone drops listview</td><td><a href="https://www.wowhead.com/tbc/zone=3457/karazhan" target="_blank" rel="noopener">Wowhead – Karazhan</a></td><td>unknown</td><td>2026-09-29</td><td>medium</td></tr><tr id="src-20"><td>[20]</td><td>robots.txt AI/scraper block</td><td><a href="https://www.wowhead.com/robots.txt" target="_blank" rel="noopener">Wowhead robots.txt</a></td><td>unknown</td><td>2026-09-29</td><td>medium</td></tr><tr id="src-21"><td>[21]</td><td>No scraping, no derivative/commercial use</td><td><a href="https://corp.fanbyte.com/legal/terms" target="_blank" rel="noopener">ZAM/Fanbyte Terms</a></td><td>2025-05-14</td><td>2026-09-29</td><td>high</td></tr><tr id="src-22"><td>[22]</td><td>AtlasLoot TBC Lua tables, GPL-2.0, stale</td><td><a href="https://github.com/Hoizame/AtlasLootClassic" target="_blank" rel="noopener">AtlasLootClassic</a></td><td>~2023</td><td>2026-09-29</td><td>high</td></tr><tr id="src-23"><td>[23]</td><td>Anniversary phase schedule</td><td><a href="https://www.wowhead.com/tbc/guide/the-burning-crusade-classic-anniversary-phase-release-roadmap" target="_blank" rel="noopener">Wowhead – Anniversary roadmap</a></td><td>2026-08-27</td><td>2026-09-29</td><td>medium</td></tr><tr id="src-24"><td>[24]</td><td>P3 current; Forever addon restrictions; population drop</td><td><a href="https://www.wowhead.com/tbc" target="_blank" rel="noopener">Wowhead – TBC hub</a></td><td>2026-09</td><td>2026-09-29</td><td>medium</td></tr><tr id="src-25"><td>[25]</td><td>TMB features, Discord-gated, no public repo found</td><td><a href="https://thatsmybis.com/wiki/faq" target="_blank" rel="noopener">That&#x27;s My BIS – FAQ</a></td><td>unknown</td><td>2026-09-29</td><td>high</td></tr><tr id="src-26"><td>[26]</td><td>Gargul TMB/CSV/softres imports, rights reserved</td><td><a href="https://github.com/papa-smurf/Gargul" target="_blank" rel="noopener">Gargul</a></td><td>2026-09</td><td>2026-09-29</td><td>high</td></tr><tr id="src-27"><td>[27]</td><td>RCLootCouncil Classic, GPL-3.0</td><td><a href="https://github.com/evil-morfar/RCLootCouncil_Classic" target="_blank" rel="noopener">RCLootCouncil_Classic</a></td><td>2026-09</td><td>2026-09-29</td><td>high</td></tr><tr id="src-28"><td>[28]</td><td>softres.it editions</td><td><a href="https://softres.it" target="_blank" rel="noopener">softres.it</a></td><td>unknown</td><td>2026-09-29</td><td>low</td></tr><tr id="src-29"><td>[29]</td><td>Blizzard Classic Profile API exists</td><td><a href="https://us.forums.blizzard.com/en/blizzard/t/getting-started-with-the-wow-api/12097" target="_blank" rel="noopener">Blizzard forums – Getting started</a></td><td>2025-09-28</td><td>2026-09-29</td><td>medium</td></tr><tr id="src-30"><td>[30]</td><td>No Blizzard API for Forever beta</td><td><a href="https://us.forums.blizzard.com/en/blizzard/t/when-will-we-gain-api-access-to-forever-apis/59595" target="_blank" rel="noopener">Blizzard forums – Forever API</a></td><td>2026-09-18</td><td>2026-09-29</td><td>low</td></tr><tr id="src-31"><td>[31]</td><td>API ToS 30-day retention (paraphrase)</td><td><a href="https://us.forums.blizzard.com/en/blizzard/c/api-discussion/18" target="_blank" rel="noopener">Blizzard forums – API discussion</a></td><td>2026-09</td><td>2026-09-29</td><td>low</td></tr><tr id="src-32"><td>[32]</td><td>robots.txt and sitemap.xml return Not Found</td><td><a href="https://wowtbc.gg/robots.txt" target="_blank" rel="noopener">WOWTBC.GG – robots.txt</a></td><td>n/a</td><td>2026-09-29</td><td>medium</td></tr><tr id="src-33"><td>[33]</td><td>TMB claims support for Forever, Classic, SoD, TBC, WotLK, Cata, MoP</td><td><a href="https://thatsmybis.com" target="_blank" rel="noopener">That&#x27;s My BIS – Home</a></td><td>unknown</td><td>2026-09-29</td><td>high</td></tr></tbody></table></details>
+<h2 id="staleness-map">Staleness map</h2>
+<p>Computed with <code>recon_kit.py staleness</code> using these windows: version, format and schedule 1 month; data-access 3 months; maintenance 6 months; legal and landscape 12 months.</p>
+<table>
+<thead>
+<tr>
+<th>Claim</th>
+<th>Re-check by</th>
+<th>Stale now?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Anniversary phase schedule, P3 current <a class="cite" href="#src-23">[23]</a><a class="cite" href="#src-24">[24]</a></td>
+<td>2026-09-27</td>
+<td><strong>yes</strong>: P4 (ZA) is due soon</td>
+</tr>
+<tr>
+<td>WowSimsExporter TBC ItemSpec <a class="cite" href="#src-16">[16]</a></td>
+<td>2026-09-29</td>
+<td><strong>yes</strong></td>
+</tr>
+<tr>
+<td>wowsimcli raid-sim only <a class="cite" href="#src-9">[9]</a></td>
+<td>2026-04-29</td>
+<td><strong>yes</strong>: file dates from 2026-03</td>
+</tr>
+<tr>
+<td>Wowhead/ZAM terms <a class="cite" href="#src-21">[21]</a></td>
+<td>2026-05-14</td>
+<td><strong>yes</strong>: dated 2025-05, still in force at access</td>
+</tr>
+<tr>
+<td>wowtbc.gg has no reuse terms <a class="cite" href="#src-3">[3]</a></td>
+<td>2022-03-01</td>
+<td><strong>yes</strong>: policy dated 2021</td>
+</tr>
+<tr>
+<td>tbc-new HTTP API endpoints <a class="cite" href="#src-10">[10]</a></td>
+<td>2026-10-01</td>
+<td>no</td>
+</tr>
+<tr>
+<td>Gargul import formats <a class="cite" href="#src-26">[26]</a></td>
+<td>2026-10-15</td>
+<td>no</td>
+</tr>
+<tr>
+<td>Spec coverage / Alpha status <a class="cite" href="#src-12">[12]</a><a class="cite" href="#src-13">[13]</a></td>
+<td>2026-10-22</td>
+<td>no</td>
+</tr>
+<tr>
+<td>db.json drop sources <a class="cite" href="#src-15">[15]</a></td>
+<td>2026-10-22</td>
+<td>no</td>
+</tr>
+<tr>
+<td>wowtbc.gg page-data.json structure <a class="cite" href="#src-2">[2]</a></td>
+<td>2026-12-29</td>
+<td>no</td>
+</tr>
+<tr>
+<td>wowsims maintenance <a class="cite" href="#src-7">[7]</a><a class="cite" href="#src-8">[8]</a></td>
+<td>2027-03-29</td>
+<td>no</td>
+</tr>
+<tr>
+<td>Forever addon/API limits <a class="cite" href="#src-24">[24]</a><a class="cite" href="#src-30">[30]</a></td>
+<td>2027-09-18</td>
+<td>no</td>
+</tr>
+<tr>
+<td>wowsims MIT licence <a class="cite" href="#src-8">[8]</a></td>
+<td>2027-09-29</td>
+<td>no</td>
+</tr>
+</tbody>
+</table>
+<p>The two legal documents are flagged stale only because of their publication dates; both were checked and found in force on 2026-09-29. <strong>The earliest real re-check is the phase schedule</strong>, when Phase 4 (Zul'Aman) launches.</p>
+</main></div></body></html>

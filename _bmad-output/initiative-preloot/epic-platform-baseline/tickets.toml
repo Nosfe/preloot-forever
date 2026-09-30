@@ -1,0 +1,103 @@
+# tickets.toml — epic-platform-baseline stories, in build order.
+
+[[entry]]
+id = 1
+type = "story"
+title = "Tracer: scaffold, CLI and one-folder build"
+description = "Creates the uv project (src/preloot, Python 3.14, pydantic 2.13.5, pytest), the preloot.models package with an empty __init__.py that later stories never edit, a settings model holding only the Target Phase that entry 6 extends, `preloot run --workspace <dir> --phase p4` writing runs/p4/<run_id>/settings.json, and a PyInstaller one-folder spec that builds dist/preloot/preloot.exe."
+verify = "On the dev PC, dist/preloot/preloot.exe run --workspace <tmp> --phase p4 writes a settings.json naming p4."
+covers = ["R1", "R2", "R3"]
+after = []
+hitl = false
+risk = "medium"
+
+[[entry]]
+id = 2
+type = "story"
+title = "Bundle wowsimcli.exe v0.0.145"
+description = "Adds a build script that downloads wowsimcli-windows.exe.zip for tag v0.0.145 and checks its sha256, bundles it into the PyInstaller spec under vendor/wowsims, locates it at runtime through sys._MEIPASS, pins the wowsims version as one constant in preloot/models/wowsims.py that entry 6 records in settings, and adds `preloot version`, which prints the PreLoot version and runs the bundled `wowsimcli version`."
+verify = "dist/preloot/preloot.exe version prints v0.0.145 as reported by the bundled wowsimcli.exe."
+covers = ["R1"]
+after = [1]
+hitl = false
+risk = "medium"
+unknown = "The wowsimcli version output format is unread, and SmartScreen or Defender may flag the unsigned exe."
+
+[[entry]]
+id = 3
+type = "story"
+title = "Phase table and Previous Phase"
+description = "Adds preloot/models/phases.py with the canonical Phase IDs (pre, p1-p5) mapped to wowtbc.gg flags and wowsims phase numbers per AD-14, plus the function that derives the Previous Phase, which entry 6 wires into the CLI and later epics use to translate at their source boundary; it does not touch cli.py."
+verify = "Unit tests cover every Phase mapping and derivation, including p1 deriving pre."
+covers = ["R2"]
+after = [1]
+hitl = false
+risk = "low"
+
+[[entry]]
+id = 4
+type = "story"
+title = "Artifact models and atomic IO"
+description = "Adds preloot/models/artifacts.py with the artifact base model (schema_version, run_id) and the Issue model {stage, kind, subject, detail}, and preloot.io artifact read and write that writes a temp file and renames it only after model validation, and raises an environment error on an artifact that fails its model; entries 6 and 7 and every later stage use it."
+verify = "Tests show a write killed before rename leaves no complete-looking artifact, and reading an invalid artifact raises the environment error."
+covers = ["R4", "R5"]
+after = [1]
+hitl = false
+risk = "low"
+
+[[entry]]
+id = 5
+type = "story"
+title = "Spec table"
+description = "Adds preloot/models/specs.py listing every TBC talent Spec with its PreLoot ID, class and Role (Tanks as Role Tank) per AD-4, leaving the wowtbc.gg page name and wowsims spec plus talent build columns for epic-contested-items and epic-sim-priority to fill."
+verify = "A test lists every Spec and asserts each has exactly one class and one Role."
+covers = ["R6"]
+after = [1]
+hitl = false
+risk = "low"
+unknown = "The talent-spec list must match the Specs wowtbc.gg publishes; epic-contested-items may add or rename IDs when it adds page names."
+
+[[entry]]
+id = 6
+type = "story"
+title = "Run folders, full settings and resume"
+description = "Extends the settings model from entry 1 with Previous Phase (from entry 3), encounter, iterations, seed, the wowsims version constant (from entry 2) and source URLs; names runs by a UTC timestamp run_id; resumes the latest run when every setting but run_id matches and starts a new run otherwise; writes settings through entry 4's IO; and makes the CLI reject an unknown --phase with the list of valid IDs."
+verify = "Two runs with identical flags share a run_id, changing --seed creates a new one, and --phase p9 exits non-zero listing the valid Phase IDs."
+covers = ["R2", "R3"]
+after = [2, 3, 4]
+hitl = false
+risk = "medium"
+unknown = "The default iteration count is the wowsims default; epic-sim-priority may raise it, which starts a new run by design."
+
+[[entry]]
+id = 7
+type = "story"
+title = "Stage runner and run log"
+description = "Adds the ordered stage registry (empty in this epic, with a test stage in tests) that runs each stage through entry 4's IO, skips a stage whose artifact exists, writes per-stage progress to run.log in the run folder, and writes nothing outside the workspace; later epics register their stages here."
+verify = "A test stage runs once and is skipped on rerun, run.log shows both, and a checksum of dist/preloot is unchanged after a run."
+covers = ["R1", "R4", "R7"]
+after = [6]
+hitl = false
+risk = "low"
+
+[[entry]]
+id = 8
+type = "story"
+title = "Refactor sweep"
+description = "Cleans up what the build records and deferred review findings of entries 1-7 name; scope is set when it starts, and it takes cleanup only."
+verify = "The full test suite passes and the built dist/preloot/preloot.exe still passes entries 2, 6 and 7 checks."
+covers = []
+after = [2, 3, 4, 5, 6, 7]
+hitl = false
+risk = "low"
+
+[[entry]]
+id = 9
+type = "story"
+title = "Portable run on the personal PC"
+description = "The user zips dist/preloot, copies it to the personal Windows 11 PC with no Python, and runs `preloot version` and `preloot run --workspace <dir> --phase p4` there."
+verify = "The user confirms both commands succeed, settings.json names P4, P3 and v0.0.145, and the bundle folder checksum matches before and after."
+covers = ["R1"]
+after = [8]
+hitl = true
+risk = "medium"
