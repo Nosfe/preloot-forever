@@ -5,6 +5,7 @@ build/
 dist/
 wheels/
 *.egg-info
+vendor/wowsims/
 
 # Virtual environments
 .venv

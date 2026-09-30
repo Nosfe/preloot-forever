@@ -2,10 +2,13 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from subprocess import CompletedProcess
 
 import pytest
 
 from preloot.cli import main
+from preloot.models.wowsims import WOWSIMS_VERSION
+from preloot.wowsimcli import WowsimcliError
 
 
 def test_happy_path_creates_workspace_and_settings_file(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
@@ -52,3 +55,59 @@ def test_no_subcommand_exits_with_usage(capsys: pytest.CaptureFixture[str]) -> N
 
     assert exc.value.code == 2
     assert "usage:" in capsys.readouterr().err.lower()
+
+
+def test_version_command_happy_path(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    monkeypatch.setattr("preloot.cli.bundled_version", lambda: WOWSIMS_VERSION)
+
+    code = main(["version"])
+
+    assert code == 0
+    out = capsys.readouterr().out.strip().splitlines()
+    assert out[0] == "preloot 0.1.0"
+    assert out[1] == f"wowsimcli {WOWSIMS_VERSION}"
+
+
+def test_version_command_from_source_tree(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    exe_path = tmp_path / "vendor" / "wowsims" / "wowsimcli.exe"
+    exe_path.parent.mkdir(parents=True)
+    exe_path.write_bytes(b"binary")
+    monkeypatch.setattr("preloot.wowsimcli._repo_root", lambda: tmp_path)
+    monkeypatch.setattr(
+        "preloot.wowsimcli.subprocess.run",
+        lambda args, **kwargs: CompletedProcess(args, 0, stdout=f"{WOWSIMS_VERSION}\n", stderr=""),
+    )
+
+    code = main(["version"])
+
+    assert code == 0
+    assert capsys.readouterr().out.splitlines() == ["preloot 0.1.0", f"wowsimcli {WOWSIMS_VERSION}"]
+
+
+def test_version_command_mismatch_returns_error(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    monkeypatch.setattr("preloot.cli.bundled_version", lambda: "v0.0.999")
+
+    code = main(["version"])
+
+    assert code == 1
+    assert "version mismatch" in capsys.readouterr().err
+
+
+def test_version_command_wowsimcli_error(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    def _raise() -> str:
+        raise WowsimcliError("binary missing")
+
+    monkeypatch.setattr("preloot.cli.bundled_version", _raise)
+
+    code = main(["version"])
+
+    assert code == 1
+    assert "binary missing" in capsys.readouterr().err
