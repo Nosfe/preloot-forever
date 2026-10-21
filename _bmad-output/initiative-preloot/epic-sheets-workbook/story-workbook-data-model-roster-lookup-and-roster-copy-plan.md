@@ -95,6 +95,8 @@ context:
 
 ## Implementation Notes
 
+- Live run on `preloot-forever` (fr_FR locale) failed with `Invalid ConditionValue.userEnteredValue ... CUSTOM_FORMULA`: the Sheets API parses rule formulas like typed input, in the workbook locale. Setup now picks `;` when the locale uses a decimal comma (`formulaArgSeparator_`); a fr_FR test was added (story-4-2 PASS, 45 assertions). Commit 8cd102d.
+
 ## Plan Change Log
 
 ## Review Triage Log
