@@ -3,7 +3,7 @@ title: 'Tracer: CLASP-bound script in a new workbook'
 type: 'feature'
 ticket: '1'
 created: '2026-10-21'
-status: 'built'
+status: done
 baseline_revision: '38fefdeea7d44b6814692c3bab36800307d90386' # C:/Repos/Gargul_Preloot (code repo)
 route: 'full'
 route_source: 'auto'
