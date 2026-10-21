@@ -1,0 +1,116 @@
+# tickets.toml — epic-sheets-workbook's stories, in build order.
+# Code lives in C:/Repos/Gargul_Preloot/tools/google_apps_script; shared fixtures in its fixtures/ folder.
+
+[[entry]]
+id = 1
+type = "story"
+title = "Tracer: CLASP-bound script in a new workbook"
+description = "Creates the new workbook with a CLASP-managed bound script, the Advanced Sheets service, the owner menu with one stub per action file (attendance.js, snapshot.js, ledger.js, tier.js), the shared lock and atomic batchUpdate helper, one browser test page per story, a .claspignore for tests and fixtures, the old onOpen retired, and the README setup steps."
+verify = "The owner opens the workbook, runs the test menu action and sees one row written; a forced failure writes nothing; the browser test page passes."
+covers = ["CAP-1"]
+after = []
+hitl = true
+risk = "medium"
+unknown = "Whether Node 22+ and clasp can be installed and logged in on the owner's PC."
+
+[[entry]]
+id = 2
+type = "story"
+title = "Workbook data model, roster lookup and roster copy"
+description = "Adds every tab with its header contract (Config with tierId and bisWindowId, Roster with raiderKey, role, tankPriority, parse and gain as a fraction, Rerolls, Raids, report-to-raid map, Attendance, Bench, Awards, tier item inputs, pattern/design list), one exact-name roster lookup that rejects duplicates and replaces the case-insensitive and realm matching, owner-only editing, and the copied roster and Rerolls."
+verify = "A raider account opens the workbook read-only; the copied Roster and Rerolls match the old workbook; a duplicate raiderKey is flagged."
+covers = ["CAP-1", "CAP-5"]
+after = [1]
+hitl = true
+risk = "high"
+
+[[entry]]
+id = 3
+type = "story"
+title = "Score formulas and shared fixtures"
+description = "Adds native formulas for both Presence windows, BiS and Impact loot counts from the Awards rows, BiS Ratio and Impact Score per allocation-rules.md and AD-2 (full precision, display rounding, no tank score), and fixtures/scores.json with inputs and expected unrounded outputs, including near-tie and identical-input exact-tie cases, which epic-raid-companion's Lua also runs."
+verify = "Entering each fixture row in a test copy reproduces its expected values, and the browser test checks a JS reference against the fixture."
+covers = ["CAP-2", "CAP-3", "CAP-4"]
+after = [2]
+hitl = false
+risk = "medium"
+
+[[entry]]
+id = 4
+type = "story"
+title = "Warcraft Logs attendance import"
+description = "Adds owner menu actions to store WCL credentials in User Properties and import a public report into a raid: reuses the attendance.js fetch, credits more than 25% of distinct completed boss fights per raidId across merged reports with Rerolls alts to their main, treats a repeated report ID as a no-op, refuses while a raid is open, and commits in one batch; removes Drive output, Script Properties, the attendance date cutoffs, and the local tools, and repairs the attendance test pages."
+verify = "Importing a public report credits the expected raiders, importing it again changes nothing, and the browser tests pass."
+covers = ["CAP-2"]
+after = [6]
+hitl = true
+risk = "medium"
+
+[[entry]]
+id = 5
+type = "story"
+title = "Raider-facing views"
+description = "Adds the view-only Roster, Impact Items (tanks without a score, MT1 before MT2, exact ties shown as ties), and per-spec tabs with ratios, score breakdowns, BiS/alt-BiS/Impact status, and simulated gain."
+verify = "A raider account sees the three tabs with current values and cannot edit them."
+covers = ["CAP-5"]
+after = [3]
+hitl = true
+risk = "low"
+
+[[entry]]
+id = 6
+type = "story"
+title = "Raid lifecycle and pre-raid snapshot export"
+description = "Adds opening a raid (raidId created once and reused), freezing score inputs while it is open, and the menu export of the Interchange v1 snapshot, raw or Base64, plus fixtures/snapshot-sample.json for epic-raid-companion."
+verify = "The exported snapshot validates against Interchange v1 and recomputes to the values shown in the workbook."
+covers = ["CAP-7"]
+after = [3]
+hitl = false
+risk = "medium"
+unknown = "How frozen inputs are refused when the owner edits a cell directly: a warning-only protection, an onEdit revert, or checks at export and import."
+
+[[entry]]
+id = 7
+type = "story"
+title = "Post-raid Custom-export import"
+description = "Parses the Gargul Custom export lines, ignores committed raidIds, validates per AD-6 (single open raid, treatment, unique checksum, exact recipient, Rerolls alts rejected, OS and pattern/design forced to NONE), lists rejected lines with checksum, date, time and winner, appends the Awards rows and closes the raid in one batch (an empty export closes a raid with no awards), and adds fixtures/custom-export-sample.txt; removes the RCLC import, loot coefficients, and Pattern/Design prefix detection."
+verify = "Importing the sample updates loot counts for exactly the awarded raiders, and a malformed sample changes nothing and lists its rejected lines."
+covers = ["CAP-3", "CAP-4", "CAP-7"]
+after = [6]
+hitl = false
+risk = "high"
+
+[[entry]]
+id = 8
+type = "story"
+title = "Tier management"
+description = "Adds the owner-triggered BiS reset between raids, archiving the active tier read-only with no restore and activating the next in one atomic batch, the Impact Item Count carryover choice, and refusal of each while a raid is open."
+verify = "On a workbook copy, the reset restarts BiS counts while tier Presence remains, the archived tier is read-only, and each action is refused while a raid is open."
+covers = ["CAP-1", "CAP-8"]
+after = [7]
+hitl = false
+risk = "high"
+
+[[entry]]
+id = 9
+type = "story"
+title = "Accept the real Gargul export"
+description = "Imports epic-raid-companion's recorded real Custom export into the live workbook, fixes any parser gap, keeps that export as a fixture, and records that story 6's snapshot loaded in the companion."
+verify = "The real raid's loot counts in the live workbook match its awards, and the snapshot load is recorded."
+covers = ["CAP-7"]
+after = [7, "epic-raid-companion"]
+hitl = true
+risk = "medium"
+unknown = "What the real export contains that the hand-written sample did not."
+
+[[entry]]
+id = 10
+type = "story"
+title = "Refactor sweep"
+description = "Cleans up from the build records and deferred review findings, and brings the script README up to date with the final menu."
+verify = "The browser tests pass and the README matches the menu."
+covers = []
+after = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+hitl = false
+risk = "low"
+unknown = "Scope is set when it starts."

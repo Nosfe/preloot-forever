@@ -1,50 +1,53 @@
 ---
 type: initiative
-title: "Sim-backed loot priority before each raid phase"
+title: "Loot priority from Sheets and Gargul on WoW Forever"
 parent: none
-covers: [CAP-1, CAP-2, CAP-3, CAP-4, CAP-5, CAP-6, CAP-7, CAP-8, CAP-9, CAP-10]
+covers: [CAP-1, CAP-2, CAP-3, CAP-4, CAP-5, CAP-6, CAP-7, CAP-8]
 after: []
 assignee: ""
-risk: medium
+risk: high
 ---
 
-# Sim-backed loot priority before each raid phase
+# Loot priority from Sheets and Gargul on WoW Forever
 
 ## Description
 
-Before a TBC Anniversary raid phase launches, the loot officer runs PreLoot once. The officer board gets one report that ranks, by simulation, which Spec gains most from each item several Specs want. The spec owns the capabilities, constraints and non-goals. This initiative delivers them as a proof of concept for one guild, starting with P4.
+The guild owner keeps one roster's loot priorities in a Google Sheets workbook and awards raid loot in Gargul with each roller's BiS Ratio and Impact Score in view, while the award decision stays manual. Raiders read the published priorities. The spec owns the capabilities, constraints, and non-goals; this initiative delivers them for WoW Forever by evolving the owner's existing Gargul_Preloot addon and Apps Script.
 
 ## Outcome
 
-The officer board decides P4 loot priority from the Priority Table instead of hours of manual investigation. The signal is the spec's success signal.
+The owner runs a WoW Forever raid from the new workbook and companion addon instead of the current single attendance/loot ratio; the signal is the spec's success signal.
 
 ## Done when
 
-1. Before P4 launches, the officer produces the P4 Priority Table in one run of the portable build on the personal Windows 11 PC, and reviews it in under an hour.
-2. The officer board uses the published `report.html` and `priority.csv` from the shared folder as the basis for P4 loot priority.
-3. Every capability CAP-1 to CAP-10 works in that build, with no step done by hand beyond copying the two files to the shared folder.
-4. The report shows every Issue and match rate from the run, and nothing from the BiS Lists is missing without being listed.
+1. The owner pastes a WoW Forever Warcraft Logs link into the new workbook, and that raid's attendance is credited: more than 25% of its boss fights, with Rerolls alts crediting their main.
+2. Raiders with view access see the Roster, Impact Items, and per-spec tabs with BiS Ratio and Impact Score breakdowns, and cannot edit them.
+3. Before a raid the owner loads the workbook snapshot into the companion on WoW Forever; during rolls each roller's BiS Ratio and Impact Score show and update before the next roll after each award.
+4. After the raid, one Gargul Custom export pasted into the workbook updates loot counts for exactly the awarded raiders according to each award's BIS, IMPACT, or NONE choice; a malformed export changes nothing.
+5. The owner triggers the BiS reset and archives a tier; archives are read-only.
 
 ## Boundaries
 
-Split by the spec's capabilities, with one extra split: the contested list is usable before the sims exist. It is not a loot-distribution tool, not per-raider ranking, and not hosted. See the spec's Non-goals. Tracer path: `preloot run --workspace <dir> --phase p4` from the zip loads the P4 and P3 BiS Lists for two DPS Specs, finds one Contested Item, runs the baseline and candidate sims, and produces one ranked row in `report.html`.
+Split by side: the workbook and its bound Apps Script first, then the Gargul companion addon. Both live in the owner's repo `zambelaba/Gargul_Preloot`. See the spec's Non-goals. Out of scope: CLASP, a desktop GUI, entering first-tier class/spec/item/BiS/sim data (the owner does it), and running the old version alongside the new one. Tracer path: workbook snapshot, companion display, award with treatment, Gargul Custom export, workbook import updating counts.
 
-- Touch point: GitHub releases of wowsims tbc-new — `wowsimcli.exe` v0.0.145 downloaded at build time; owner: epic-platform-baseline
-- Touch point: wowtbc.gg — BiS List page data read; owner: epic-contested-items
-- Touch point: wowsims `db.json` at tag v0.0.145 — item data read; owner: epic-contested-items
-- Touch point: `wowsimcli.exe` — invoked per sim; owner: epic-sim-priority
-- Touch point: Warcraft Logs API — P3 parses read for the Tie-Break; owner: epic-sim-priority
-- Touch point: shared folder — the user copies `report.html` and `priority.csv` there by hand, with no code; owners: epic-contested-items (report), epic-sim-priority (CSV)
+- Touch point: Warcraft Logs API v2 — public report attendance read; owner: epic-sheets-workbook
+- Touch point: Gargul v8.0.1 — roll table, award, importer and exporter hooks, and the export settings; owner: epic-raid-companion
+- Touch point: WoWSims Forever — the owner types each Raider's simulated gain into the workbook by hand, with no code; owner: epic-sheets-workbook
+- Touch point: the old workbook — read once to copy the roster and Rerolls; owner: epic-sheets-workbook
 
 ## References
 
-- spec — _bmad-output/initiative-preloot/spec-preloot/spec-preloot.md, sections Capabilities, Constraints, Non-goals
-- architecture — _bmad-output/initiative-preloot/architecture-preloot/architecture-preloot.md, sections Invariants & Rules (AD-1 to AD-14)
-- research — _bmad-output/initiative-preloot/research-preloot-data-sources-feasibility/research-preloot-data-sources-feasibility.md, for data-source background
+- spec — _bmad-output/initiative-preloot/spec-raid-loot-distribution/spec-raid-loot-distribution.md, sections Capabilities, Constraints, Non-goals
+- architecture — _bmad-output/initiative-preloot/architecture-raid-loot-distribution/architecture-raid-loot-distribution.md, sections Invariants & Rules (AD-1 to AD-8), Interchange v1, Gargul export template
+- brownfield — _bmad-output/initiative-preloot/spec-raid-loot-distribution/brownfield.md
+- code — C:/Repos/Gargul_Preloot (github.com/zambelaba/Gargul_Preloot, tag 1.1.0)
 
 ## Notes
 
-- Decision: three epics — platform baseline, then contested items, then sim priority. The contested list gets its own epic so it can be shared before the sims exist (user's decision, 2026-09-30).
-- Decision: every rule more than one epic must follow lives in the architecture spine: artifact models (AD-3), the Spec and Phase tables (AD-4, AD-14), the Issue shape (AD-9), settings and run folders (AD-10), and the publish boundary (AD-13). The code for them is built in epic-platform-baseline (2026-09-30).
-- Decision: stop at the epic level. No epic is incepted yet (user's decision, 2026-09-30).
-- Open question: wowtbc.gg reuse permission. The user asks only if the POC works, and the answer affects no epic now.
+- Dropped: the PreLoot initiative content and its epics 1-3 (platform baseline, contested items, sim priority) and the item in deferred-work.md; the product was redefined as Sheets plus Gargul loot distribution (user's decision, 2026-10-21).
+- Decision: two epics, the workbook first, then the addon (2026-10-21).
+- Decision: start a new workbook and copy the roster and Rerolls from the old one (2026-10-21).
+- Decision: switch over at once; the old addon and workbook are not kept running in parallel (2026-10-21).
+- Decision: no separate platform-baseline epic; each epic opens with its own setup stories (the workbook, script and credentials; the Forever TOC and loading on Gargul v8.0.1) (2026-10-21).
+- Decision: shared contracts live in the spine: Interchange v1 and the Gargul export template (governed by AD-6), the raid ID lifecycle (AD-6), identity (AD-3), the calculation contract (AD-2). epic-sheets-workbook owns any change to them and the shared fixtures (2026-10-21).
+- Decision: stop at the epic level; no epic is incepted yet (2026-10-21).
