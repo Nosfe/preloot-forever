@@ -40,8 +40,8 @@ The guild owner needs a consistent, inspectable way to maintain loot priorities 
   - **intent:** The owner transfers roster state to Gargul before a raid and award results back to Sheets afterward.
   - **success:** A valid pre-raid snapshot loads the correct Raider state; the post-raid Gargul Custom export, tagged with the raid and each award's treatment, updates the correct roster counts; malformed imports leave existing data unchanged.
 - **CAP-8 — Manage tier transitions**
-  - **intent:** The owner archives completed tiers, triggers the BiS-window reset, and configures Impact Item Count carryover.
-  - **success:** Archives are read-only and non-restorable, and their raids still count toward Lifetime Presence. Once three weeks into a new tier, the owner triggers the BiS reset between raids, restarting Tier Presence and the BiS-loot count; Lifetime Presence continues.
+  - **intent:** The owner archives completed tiers, activates the next one (which resets BiS), and configures Impact Item Count carryover.
+  - **success:** Archives are read-only and non-restorable, and their raids still count toward Lifetime Presence. Activating a new tier, between raids, is the BiS reset: Tier Presence and the BiS-loot count restart; Lifetime Presence continues. There is no BiS reset inside a tier (owner decision 2026-10-22).
 
 ## Constraints
 

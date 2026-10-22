@@ -14,7 +14,7 @@
 
 `BiS Ratio = Normalized Tier Presence / (BiS loots received since reset + 1)`.
 
-Any BiS-eligible Raider who rolls outranks every non-BiS roller regardless of ratio. BiS candidates rank by BiS Ratio; exact ties are decided manually using Gargul's roll value. If no candidate has the item marked BiS, interested Raiders roll without BiS Ratio impact. BiS items cannot be passed. Once three weeks into a new tier, the owner triggers the BiS reset between raids; Tier Presence and the BiS-loot count restart, while Lifetime Presence continues. An Impact-marked BiS award leaves BiS Ratio unchanged.
+Any BiS-eligible Raider who rolls outranks every non-BiS roller regardless of ratio. BiS candidates rank by BiS Ratio; exact ties are decided manually using Gargul's roll value. If no candidate has the item marked BiS, interested Raiders roll without BiS Ratio impact. BiS items cannot be passed. The BiS reset happens only when the owner activates a new tier, between raids; Tier Presence and the BiS-loot count restart, while Lifetime Presence continues. There is no reset inside a tier (owner decision 2026-10-22). An Impact-marked BiS award leaves BiS Ratio unchanged.
 
 ## Impact
 
