@@ -3,7 +3,7 @@ title: 'Score formulas and shared fixtures'
 type: 'feature'
 ticket: '3'
 created: '2026-10-22'
-status: 'built'
+status: done
 baseline_revision: '5508d937b83aad4ae3d81cb85d5d5076893c7287' # C:/Repos/Gargul_Preloot (code repo)
 route: 'full'
 route_source: 'auto'
