@@ -3,7 +3,7 @@ title: 'Warcraft Logs attendance import'
 type: 'feature'
 ticket: '4'
 created: '2026-10-22'
-status: 'built'
+status: done
 baseline_revision: '2d9cdf4d030771bf16b3e50218473bed4496daec' # C:/Repos/Gargul_Preloot (code repo)
 route: 'full'
 route_source: 'auto'
