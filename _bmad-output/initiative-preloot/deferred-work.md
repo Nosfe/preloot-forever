@@ -5,3 +5,7 @@
 - source_plan: `C:/Repos/preloot-agent/_bmad-output/initiative-preloot/plan-4-2-workbook-polish.md`
   summary: Before story 4.3, update the architecture spine, spec and PRD with five workbook-polish decisions now implemented in the Apps Script workbook contract.
   evidence: Decisions to record: (1) Raids fields now include report-codes and BiS-window behaviour by reset date; (2) Config stores the open raid id; (3) PatternItems is removed; (4) tank priority is removed from roster and interchange assumptions; (5) Impact Score gain now comes from Objets-tab simulated gain by roller spec (reverses AD-2 no-item-gain-lookup and updates Interchange v1/addon assumptions).
+
+- source_plan: `C:/Repos/preloot-agent/_bmad-output/initiative-preloot/epic-sheets-workbook/story-raid-lifecycle-and-pre-raid-snapshot-export-plan.md`
+  summary: Confirm the companion addon decodes the 4.6 Base64 snapshot (UTF-8 JSON, Interchange v2), including accented spec labels such as Prêtre Sacré.
+  evidence: Unverified (high if false): no Base64 decode call was found in the repo's Lua. To settle, paste a live export into the addon in game, or have epic 5's importer test decode fixtures/snapshot-sample.json once Base64-encoded.
