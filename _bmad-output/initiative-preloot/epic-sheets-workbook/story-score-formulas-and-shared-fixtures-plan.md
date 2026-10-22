@@ -120,7 +120,7 @@ context:
 
 - Owner follow-up (2026-10-22), after a live check (the first test dates were before the Config start date):
   - Columns renamed, with their former labels still accepted:
-    - Max palier is now "Nombre de raids par palier".
+    - Max palier is now "Nombre de raids du palier".
     - Présence vie is now "Présence totale".
     - Max vie is now "Nombre de raids totaux".
   - A Présence row counts as a raid when it has a Raid (ID) or a Date.
