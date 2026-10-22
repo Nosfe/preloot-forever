@@ -3,7 +3,7 @@ title: 'Workbook data model, roster lookup and roster copy'
 type: 'feature'
 ticket: '2'
 created: '2026-10-21'
-status: 'built'
+status: done
 baseline_revision: 'b80fb21c57d308b34b9dac805674ad7e5ca0d9ab' # C:/Repos/Gargul_Preloot (code repo)
 route: 'full'
 route_source: 'auto'
