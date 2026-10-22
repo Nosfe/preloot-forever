@@ -3,7 +3,7 @@ title: 'Raid lifecycle and pre-raid snapshot export'
 type: 'feature'
 ticket: '6'
 created: '2026-10-22'
-status: 'built'
+status: done
 baseline_revision: '6335ec97673610a2ecd1569f7edd159c26dd1700' # C:/Repos/Gargul_Preloot (code repo)
 route: 'full'
 route_source: 'auto'
