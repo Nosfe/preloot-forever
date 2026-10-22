@@ -118,6 +118,19 @@ context:
 
 ## Implementation Notes
 
+- Owner follow-up (2026-10-22), after a live check (the first test dates were before the Config start date):
+  - Columns renamed, with their former labels still accepted:
+    - Max palier is now "Nombre de raids par palier".
+    - Présence vie is now "Présence totale".
+    - Max vie is now "Nombre de raids totaux".
+  - A Présence row counts as a raid when it has a Raid (ID) or a Date.
+  - A BIS award with a blank Date uses the Date of its Raid (ID) in Présence; with neither, it counts.
+  - On setup, Présence and Awards columns of names in neither Roster nor Rerolls move to `Présence (archive)` and `Awards (archive)` by cut and paste.
+    - They move back when the name returns to Roster or Rerolls.
+    - An empty Roster archives nothing.
+    - Présence archive rows line up with Présence rows by row number.
+  - Moved to story 4.6: an automatic Raid (ID) and the raid Date read from the WCL log link.
+
 - The implementer delivered with all pages passing and no tests deleted.
 - Parent hardening before review:
   - The exact name lookup is wrapped in `ARRAYFORMULA` (`exactHeaderMatch_`), so `EXACT` compares the whole header row in Sheets.
