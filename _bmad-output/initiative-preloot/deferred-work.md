@@ -13,7 +13,8 @@
 - source_plan: owner discussion 2026-10-22 (after story 4.7; nothing implemented)
   summary: Linked mains — a player with two (or more) Roster mains (not Rerolls) shares attendance across them, while each character keeps its own Awards block, BiS/Impact loot counts, parse, spec, BiS ratio and Impact score.
   evidence: |
-    Status: discussion only, awaiting owner answers; then correct course and add an epic-4 story (after 4.8, or before it if needed before the tier change).
+    Status: RESOLVED 2026-10-23, nothing to build. The owner decided to remove Rerolls: every character is a main with its own attendance, so there is no attendance to share.
+    Status (before): discussion only, awaiting owner answers; then correct course and add an epic-4 story (after 4.8, or before it if needed before the tier change).
     Proposed model: new Roster column "Joueur"; rows sharing a value share attendance (symmetric, allows 2+, blank = solo). Rerolls unchanged: an alt credits its main's whole group.
     Touch points: End raid WCL credit merges pulls across the group for the >25% threshold and writes 1 in every group member's Présence column; score formulas, loot import, snapshot, archive and Delete raid unchanged; setup warns on a Joueur value used once; a character cannot be both Roster and Rerolls (already enforced).
     Fairness risk: the absent linked main keeps gaining presence without loot, so its BiS ratio climbs; one person's attendance builds two characters' priority. Options: (1) accept, full credit to both; (2) partial credit (e.g. 0.5) for the absent partner; (3) shared BiS loot count (contradicts separate BiS ratio).
@@ -29,3 +30,11 @@
     Limits: healer and tank sims weak or missing, so their Gain likely stays manual (tanks have no Impact anyway). Items x specs means thousands of sims.
     Prior art: the old PreLoot app bundled wowsimcli v0.0.145 with a download and checksum tool (commit cb09a2d, removed in fba49e9). Recoverable from git history.
     Open questions: does the new React UI still offer a CLI or RaidSimRequest export (else build the input from the protos); which healer and tank specs tbc-new supports; time per sim on the owner's PC. Settle with a prototype: one spec, baseline vs one swapped item.
+
+- source_plan: none
+  summary: Remove "Présence totale" and "Nombre de raids totaux" from Roster. Impact then uses tier presence like BiS ratio, so both scores reset at each new tier.
+  evidence: Split on 2026-10-23 from the owner's three-change request. Order agreed: second, after the Roster raid-group column. Touches score formulas, Roster schema/migration, snapshot (lifetimePresence fields) and the architecture rules. It also simplifies story 4.8.
+
+- source_plan: none
+  summary: Remove the Rerolls concept everywhere (Rerolls tab, _Listes lookup, alt attendance credit in End raid, alt rejection in loot import, setup and archive checks, snapshot, tests); every character is a main.
+  evidence: Split on 2026-10-23 from the owner's three-change request. Order agreed: third, after the lifetime-presence removal, since both edit the Roster schema, setup migration and snapshot. This closes the linked-mains item.
