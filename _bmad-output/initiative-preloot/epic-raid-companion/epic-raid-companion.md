@@ -12,7 +12,7 @@ risk: high
 
 ## Description
 
-Gargul_Preloot's `Core.lua` becomes the owner-only companion addon for WoW Forever, per brownfield.md. It imports the workbook snapshot (Interchange v2, with the Objets item table) and shows each roller's BiS Ratio in Gargul's roll table. When the dropped item's Statut for the roller's spec is IMPACT, it also shows their full Impact Score: the raider's Impact base × that item's gain for their spec. It never chooses or awards loot; the owner decides every award, even against the displayed values. It records the owner's BIS, IMPACT, or NONE choice per award, and fills the raid and treatment into Gargul's Custom export. This epic delivers the addon side of CAP-7: the snapshot import and the ledger export.
+Gargul_Preloot's `Core.lua` becomes the owner-only companion addon for WoW Forever, per brownfield.md. It imports the workbook snapshot (Interchange v2, with the Objets item table) and shows each roller's BiS Ratio in Gargul's roll table. When the dropped item's Statut for the roller's spec is IMPACT, it also shows their full Impact Score: the raider's Impact base × that item's gain for their spec. It never chooses or awards loot; the owner decides every award, even against the displayed values. It records the owner's BIS, IMPACT, CLASS_BOUND, or NORMAL choice per award, and fills the raid and treatment into Gargul's Custom export. This epic delivers the addon side of CAP-7: the snapshot import and the ledger export.
 
 ## Outcome
 
@@ -23,7 +23,7 @@ The owner awards loot in Gargul with live per-roller priorities and exports the 
 1. The new addon build, with `## Interface-Camelot: 16001`, loads with Gargul v8.0.1 in the owner's WoW Forever client and replaces 1.1.0; the release is tagged in the repo.
 2. It imports a v2 snapshot exported from epic-sheets-workbook's workbook, rejects an invalid one, and its recomputed BiS Ratios, Impact bases, and full Impact Scores match epic-sheets-workbook's shared fixtures.
 3. Its columns sit after Gargul's ten native roll-table columns, and awarding still records the roll type.
-4. The owner picks BIS, IMPACT, or NONE per award, and every roller's values update before the next roll; the Impact column is empty for a roller whose spec has no IMPACT Statut for the dropped item, and for tanks.
+4. The owner picks BIS, IMPACT, CLASS_BOUND, or NORMAL per award, and every roller's values update before the next roll; the Impact column is empty for a roller whose spec has no IMPACT Statut for the dropped item, and for tanks.
 5. With the Gargul export settings applied, the Custom export fills `raidId` and `treatment` by checksum; one real raid runs the tracer end to end, and that raid's export is saved as epic-sheets-workbook's parser fixture.
 6. The brownfield cleanup on the addon side is done: `GargulPrelootDB` persistence, the random ratio, case-insensitive and `-Thunderstrike` matching, and the test-data and hash helpers removed; `_importButtonAdded` and the `Base64.decode` call fixed; the samples (`json_export_example.json`, `sample_import`, `sample_json`), root README, and `Gargul.code-workspace` updated or removed. The French chat line is kept.
 
@@ -46,5 +46,11 @@ The addon only; no workbook or Apps Script code. Uses the calculation contract, 
 - Decision: the opening stories are the platform baseline: the Forever TOC and loading the addon with Gargul v8.0.1 (2026-10-21).
 - Waits on epic-sheets-workbook because: it needs the shared score fixtures (4.3), the snapshot export and sample (4.6), and the Custom-export parser and sample (4.7), all in tools/google_apps_script/fixtures/; its recorded real export feeds 4.9.
 - Decision: the French chat line on an award shows the recipient's new BiS Ratio when the award is BIS and the new full Impact Score for the awarded item when it is IMPACT (2026-10-21).
-- Assumption: a NONE award adds no ratio or score to the chat line.
+- Assumption: a NORMAL or CLASS_BOUND award adds no ratio or score to the chat line.
+- Source conflict: description and Done when 4 said BIS, IMPACT, or NONE — AD-6 now has BIS, IMPACT, CLASS_BOUND, NORMAL (NONE renamed NORMAL 2026-10-23); text updated.
+- Decision: tracer is 5.1 (Forever TOC, pasted snapshot, BiS Ratio column); after it, two lanes: snapshot and scores (5.4, 5.5) and awards and export (5.2, 5.3), joined at 5.6 (2026-10-23).
+- Decision: Lua 5.1 is installed locally and offline tests run the shared fixtures; Gargul v8.0.1 is cloned read-only to C:/Repos/Gargul for API reading (2026-10-23).
+- Decision: Core.lua is split into a few files during the tracer (2026-10-23).
+- Decision: the treatment picker is prefilled from the winner's spec Statut for the item; it is a suggestion the owner confirms or changes on every award, so AD-4 holds (2026-10-23).
+- Decision: 5.7 records the real raid's export and snapshot load that 4.9 imports; 4.9 waits on 5.7 (2026-10-23).
 - Decision (change-item-gain-impact-score): the snapshot carries each raider's `classSpec`, so the addon looks up the dropped item's Statut and gain for that spec and never guesses the spec from Gargul (2026-10-21).

@@ -1,0 +1,95 @@
+# tickets.toml — epic-raid-companion's stories, in build order.
+# Code lives in C:/Repos/Gargul_Preloot (addon at the repo root); shared fixtures in tools/google_apps_script/fixtures.
+
+[[entry]]
+id = 1
+type = "story"
+title = "Tracer: Forever addon shows BiS Ratio from a pasted snapshot"
+description = "Sets the TOC to Interface-Camelot 16001, splits Core.lua into a few files (snapshot, scores, columns, awards, export), imports the 4.6 Base64 snapshot into session-only state (GL.Base64.Decode and _importButtonAdded fixed), and shows one BiS Ratio column after Gargul's ten native roll-table columns; removes GargulPrelootDB, the random ratio, the hash and test-data helpers, case-insensitive and -Thunderstrike matching, the old ratio and column, and the old samples (json_export_example.json, sample_import, sample_json). Owner setup: install Lua 5.1 for offline tests and clone Gargul v8.0.1 read-only to C:/Repos/Gargul."
+verify = "An offline Lua test decodes a Base64 copy of snapshot-sample.json, accented specs included (closing the deferred Base64 check), and in game with Gargul v8.0.1 a pasted live snapshot shows BiS Ratios matching the workbook."
+covers = ["CAP-6", "CAP-7"]
+after = ["4.6"]
+hitl = true
+risk = "high"
+unknown = "Whether Gargul v8.0.1's roll table accepts appended columns on WoW Forever, and how Lua 5.1 tests load addon files written against WoW globals."
+
+[[entry]]
+id = 2
+type = "story"
+title = "Treatment per award"
+description = "Hooks Gargul's award flow to record the owner's treatment (BIS, IMPACT, CLASS_BOUND, NORMAL) by Gargul checksum in session-only state, with a picker prefilled from the winner's spec Statut for that item that the owner can change; award edits update and deletions remove the checksum entry."
+verify = "An offline test covers the session map's add, edit and delete, and in game an award, an edit and a deletion record the right treatments."
+covers = ["CAP-6", "CAP-7"]
+after = [1]
+hitl = true
+risk = "high"
+unknown = "Where Gargul v8.0.1 lets an addon add a choice to its award dialog, and which hooks fire on award edit and deletion."
+
+[[entry]]
+id = 3
+type = "story"
+title = "Custom export fill"
+description = "Wraps Gargul's Exporter:transformEntriesToCustomFormat to fill @GPRAID and @GPTREATMENT on each line from the session map, matched by the line's checksum, leaving both empty for awards the session did not capture."
+verify = "An offline test shows filled lines parse like custom-export-sample.txt, and in game a test award exports with its raidId and treatment."
+covers = ["CAP-7"]
+after = [2, "4.7"]
+hitl = true
+risk = "high"
+unknown = "Whether the wrapped function returns the whole export text or line by line on v8.0.1."
+
+[[entry]]
+id = 4
+type = "story"
+title = "Snapshot validation and recompute"
+description = "Validates the whole Interchange v2 snapshot before replacing session state (version, types, tier and raid ids, unique raider keys and item ids, Presence not above its maximum, Statut values), recomputes BiS Ratio and Impact base and rejects values outside the 1e-9 tolerance, and keeps state unchanged on any rejection."
+verify = "Offline tests pass against scores.json and snapshot-sample.json, and broken copies are each rejected with the previous state kept."
+covers = ["CAP-7"]
+after = [1, "4.3"]
+hitl = false
+risk = "medium"
+
+[[entry]]
+id = 5
+type = "story"
+title = "Impact column"
+description = "Adds the Impact column after the BiS Ratio column: the roller's Impact base times the dropped item's gainFraction for the roller's classSpec when that Statut is IMPACT, empty otherwise and for tanks."
+verify = "An offline test passes the scores.json impact cases, and in game a roll on an IMPACT item shows the expected scores."
+covers = ["CAP-6"]
+after = [4]
+hitl = true
+risk = "medium"
+
+[[entry]]
+id = 6
+type = "story"
+title = "Live recompute and chat line"
+description = "Recomputes counters and both columns from the snapshot and the session's awards after any award change, before the next roll (IMPACT updates only Impact state; NORMAL and CLASS_BOUND update neither), and makes the French chat line show the new BiS Ratio for a BIS award and the new Impact Score for an IMPACT award, nothing for the others."
+verify = "An offline test of an award sequence matches hand-computed values, and in game two awards in a row update the columns and chat lines."
+covers = ["CAP-6"]
+after = [2, 5]
+hitl = true
+risk = "medium"
+
+[[entry]]
+id = 7
+type = "story"
+title = "Real raid end to end and release"
+description = "The owner applies the Gargul export settings, runs one real raid with the companion, and records the snapshot load and the raid's export for 4.9; the root README is rewritten for the companion, Gargul.code-workspace updated, and the release tagged locally."
+verify = "The real raid's export, with raidId and treatment on every captured line, imports into the workbook (4.9 then runs on it), and the tag exists."
+covers = ["CAP-6", "CAP-7"]
+after = [3, 6]
+hitl = true
+risk = "medium"
+unknown = "What the real export contains that the offline tests did not."
+
+[[entry]]
+id = 8
+type = "story"
+title = "Refactor sweep"
+description = "Cleans up from the build records and the review findings deferred during the epic."
+verify = "The offline Lua tests pass and the addon loads in game."
+covers = []
+after = [1, 2, 3, 4, 5, 6, 7]
+hitl = false
+risk = "low"
+unknown = "Scope is set when it starts."
