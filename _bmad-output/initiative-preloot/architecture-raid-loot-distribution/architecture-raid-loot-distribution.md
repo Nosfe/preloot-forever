@@ -41,19 +41,19 @@ The Google Sheets workbook is the durable system of record. Its bound Apps Scrip
 
 - **Binds:** CAP-1, CAP-2, CAP-3, CAP-4, CAP-5, CAP-7, CAP-8
 - **Prevents:** Sheets and the addon becoming competing authorities for roster, attendance, loot history, or tier state.
-- **Rule:** Persist one roster across WoW eras, one active tier at a time, active-tier inputs, attendance, award history, and archives in the workbook. The owner maintains configuration inputs; the bound Apps Script applies attendance and award imports. The workbook records the single open raid in Config (Raid ouvert) until its ledger is committed; refuse tier activation while a raid is open. Archives are read-only and non-restorable, and their raids still count toward Lifetime Presence; archive and activate a new tier together in one atomic workbook batch. MVP uses no separate hosted service or desktop GUI. The companion holds only the current raid's working snapshot and award events.
+- **Rule:** Persist one roster across WoW eras, one active tier at a time, active-tier inputs, attendance, award history, and archives in the workbook. The owner maintains configuration inputs; the bound Apps Script applies attendance and award imports. The workbook records the single open raid in Config (Raid ouvert) until its ledger is committed; refuse tier activation while a raid is open. Archives are read-only and non-restorable; archive and activate a new tier together in one atomic workbook batch. MVP uses no separate hosted service or desktop GUI. The companion holds only the current raid's working snapshot and award events.
 
 ### AD-2 — Sheet formulas own derived priority values
 
 - **Binds:** CAP-2, CAP-3, CAP-4, CAP-6, CAP-7
 - **Prevents:** Independent implementations producing different Presence, BiS Ratio, or Impact Score values.
 - **Rule:** Native Sheet formulas compute canonical derived values from workbook inputs and expose their breakdown to raiders. The allocation-rules companion is the calculation contract.
-  - **Presence:** Tier Presence counts raids dated on or after Config's BiS reset date. Lifetime Presence counts every raid, archived tiers included. Both use the Présence grid, where `1` and `B` count.
+  - **Presence:** Tier Presence counts raids dated on or after Config's tier start date (*Début du palier*), using the Présence grid, where `1` and `B` count. There is no lifetime presence: it was removed on 2026-10-23 (owner decision), so both scores use the same presence factor.
   - **BiS Ratio** uses Tier Presence.
-  - **Impact Score** = Normalized Lifetime Presence × parse × item gain / (Impact Items + 1). The item gain is the dropped item's Gain (%) for the roller's spec on the role's Objets tab, stored as a fraction. It applies only when that item's Statut for the roller's spec is `IMPACT`.
+  - **Impact Score** = Normalized Tier Presence × parse × item gain / (Impact Items + 1). Impact Items count only `IMPACT` awards from the tier start, with the same date rule as BiS loots. The item gain is the dropped item's Gain (%) for the roller's spec on the role's Objets tab, stored as a fraction. It applies only when that item's Statut for the roller's spec is `IMPACT`.
   - **Roster columns:** the raider part, Impact (sans gain objet). Gargul computes the full score per dropped item.
   - Tanks have no Impact Score, and there is no tank priority. Statut values are `BIS`, `IMPACT`, `CLASS_BOUND`, `NORMAL`.
-  - **BiS reset:** it is the activation of a new tier (no reset inside a tier, owner decision 2026-10-22), triggered in Sheets between raids, after importing the previous raid's ledger and before preparing the next. It restarts Tier Presence and the BiS-loot count; Lifetime Presence continues. Late attendance for a pre-reset raid is corrected manually.
+  - **BiS reset:** it is the activation of a new tier (no reset inside a tier, owner decision 2026-10-22), triggered in Sheets between raids, after importing the previous raid's ledger and before preparing the next. It restarts Tier Presence, the BiS-loot count and the Impact-loot count, so both scores fully reset. Late attendance for a pre-reset raid is corrected manually.
   - BiS cannot be passed; where nobody marks an item BiS, interested Raiders roll without BiS Ratio impact. An `IMPACT`-treated BiS award leaves BiS Ratio unchanged and updates Impact state.
   - **Precision:** compare unrounded results and round only for three-decimal display. Verify parity with shared near-tie, exact-tie, and item-gain fixtures.
 
@@ -108,7 +108,7 @@ All fields below are required unless marked nullable. Reject missing fields, inv
 | Payload | Fields and meaning |
 | --- | --- |
 | Pre-raid envelope | `schemaVersion` integer `2`; `tierId`, `raidId` nonempty strings from Config. The BiS window is the tier, so there is no separate window ID (2026-10-22). |
-| Pre-raid | `raiders` array with unique entries by `raiderKey` (exact character-name string). Each entry has `role` (`DPS`, `HEALER`, `TANK`, mapped from the five Rôle values), `classSpec` (spec label as in the Objets tabs, e.g. `Mage Givre`), `tierPresence`, `tierPresenceMax`, `lifetimePresence`, `lifetimePresenceMax`, `bisLootCount`, `impactLootCount` (nonnegative integer counts; maxima integers at least `1`), `dpsParse` (percentage-point value from `1` to `100`; missing input exported as `1`), `bisRatio` (unrounded number), and `impactBase` (unrounded Lifetime × parse / (Impact Items + 1), or `null` for tanks). |
+| Pre-raid | `raiders` array with unique entries by `raiderKey` (exact character-name string). Each entry has `role` (`DPS`, `HEALER`, `TANK`, mapped from the five Rôle values), `classSpec` (spec label as in the Objets tabs, e.g. `Mage Givre`), `tierPresence`, `tierPresenceMax`, `bisLootCount`, `impactLootCount` (nonnegative integer counts; maxima integers at least `1`), `dpsParse` (percentage-point value from `1` to `100`; missing input exported as `1`), `bisRatio` (unrounded number), and `impactBase` (unrounded Tier Presence × parse / (Impact Items + 1), or `null` for tanks). The lifetime fields were dropped on 2026-10-23; the version stays `2` because no reader existed yet. |
 | Pre-raid items | `items` array with unique entries by `itemID` (integer). Each entry has `specs`: an array of `{classSpec, statut, gainFraction}` for each spec with an entry, where `statut` is `BIS`, `IMPACT`, `CLASS_BOUND`, or `NORMAL` and `gainFraction` is a finite number (may be negative) or `null`. The full Impact Score for a roller is `impactBase × gainFraction` of the dropped item for the roller's `classSpec`, only when that `statut` is `IMPACT`. |
 | Post-raid | Gargul Custom export text: one JSON object per line, each ending with `,`; Sheets wraps the text in `[` `]` after removing the final comma. No envelope: the tier comes from the workbook's record for `raidId`. Fields: `checksum` (nonempty, unique), `winner` (exact roster key), `itemID` (integer), `itemName` (string, may be empty), `rollType` (string; `-` means no roll bracket), `os` (`0`/`1`), `date`, `time`, `raidId`, `treatment` (`BIS`, `IMPACT`, `CLASS_BOUND`, `NORMAL`). An empty export is valid for a raid with no awards. |
 
@@ -188,7 +188,7 @@ flowchart LR
 | CAP-2 — Attendance | Bound Apps Script, workbook inputs/formulas | AD-1, AD-2, AD-7 |
 | CAP-3 — BiS priority | Sheet formulas; companion display | AD-2, AD-3, AD-4 |
 | CAP-4 — Impact priority | Sheet formulas; companion display | AD-2, AD-4 |
-| CAP-5 — Raider-facing views | Read-only Roster (class, spec, role, parse, Tier and Lifetime Presence, BiS Ratio, Impact (sans gain objet)), Rerolls, Présence grid, Raids, Awards blocks, and one Objets tab per role (Statut and Gain per spec) in Sheets | AD-1, AD-2 |
+| CAP-5 — Raider-facing views | Read-only Roster (group, class, spec, role, parse, Tier Presence, BiS Ratio, Impact (sans gain objet)), Rerolls, Présence grid, Raids, Awards blocks, and one Objets tab per role (Statut and Gain per spec) in Sheets | AD-1, AD-2 |
 | CAP-6 — Manual Gargul awards | Gargul and companion addon | AD-4, AD-5, AD-8 |
 | CAP-7 — Pre/post-raid synchronization | Sheets, bound Apps Script, companion addon | AD-1, AD-3, AD-5, AD-6, AD-8 |
 | CAP-8 — Tier transitions and archives | Google Sheets and bound Apps Script | AD-1, AD-2 |

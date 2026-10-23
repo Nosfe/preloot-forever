@@ -6,23 +6,22 @@
 
 - **Tier Presence:** attended raids plus bench appearances since the latest BiS reset.
 - **Normalized Tier Presence:** `Tier Presence / Tier Presence Max`.
-- **Lifetime Presence:** attended raids plus bench appearances across all tiers, archived tiers included.
-- **Normalized Lifetime Presence:** `Lifetime Presence / Lifetime Presence Max`.
+- **No lifetime presence** (removed 2026-10-23, owner decision): BiS Ratio and Impact Score both use Normalized Tier Presence.
 - Each Presence Max counts possible raids in its window and initializes to `1` when none are possible.
 
 ## BiS
 
 `BiS Ratio = Normalized Tier Presence / (BiS loots received since reset + 1)`.
 
-Any BiS-eligible Raider who rolls outranks every non-BiS roller regardless of ratio. BiS candidates rank by BiS Ratio; exact ties are decided manually using Gargul's roll value. If no candidate has the item marked BiS, interested Raiders roll without BiS Ratio impact. BiS items cannot be passed. The BiS reset happens only when the owner activates a new tier, between raids; Tier Presence and the BiS-loot count restart, while Lifetime Presence continues. There is no reset inside a tier (owner decision 2026-10-22). An Impact-marked BiS award leaves BiS Ratio unchanged.
+Any BiS-eligible Raider who rolls outranks every non-BiS roller regardless of ratio. BiS candidates rank by BiS Ratio; exact ties are decided manually using Gargul's roll value. If no candidate has the item marked BiS, interested Raiders roll without BiS Ratio impact. BiS items cannot be passed. The BiS reset happens only when the owner activates a new tier, between raids; Tier Presence, the BiS-loot count and the Impact-loot count restart, so both scores fully reset. There is no reset inside a tier (owner decision 2026-10-22). An Impact-marked BiS award leaves BiS Ratio unchanged.
 
 ## Impact
 
-`Impact Score = Normalized Lifetime Presence * DPS Warcraft Logs average parse * item gain / (Impact Items already received + 1)`.
+`Impact Score = Normalized Tier Presence * DPS Warcraft Logs average parse * item gain / (Impact Items received since the tier start + 1)`.
 
 - **Item gain** is the dropped item's Gain (%) for the roller's spec on that role's Objets tab, entered by the owner (possibly from WoWSims Forever). It is stored as a fraction.
 - The score applies only when the dropped item's Statut for the roller's spec is **IMPACT**. Otherwise the roller has no Impact Score for that item.
-- Roster shows the raider part without the item gain: **Impact (sans gain objet)** = `Normalized Lifetime Presence * parse / (Impact Items + 1)`.
+- Roster shows the raider part without the item gain: **Impact (sans gain objet)** = `Normalized Tier Presence * parse / (Impact Items + 1)`.
 - Gargul shows the full score for each roller when an item drops.
 - A missing DPS parse is `1`. Tanks have no Impact Score. Identical complete scores resolve by roll.
 - At a new-tier transition, the owner chooses whether Impact Item Count carries over or resets.

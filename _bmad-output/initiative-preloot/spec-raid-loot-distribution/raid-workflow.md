@@ -6,7 +6,7 @@ The owner manually maintains the roster (class, spec, role, parse), Rerolls, and
 
 Raiders receive view-only access to the workbook:
 
-- Roster: raider, class, spec, role, parse, Tier and Lifetime Presence, BiS Ratio, and Impact (sans gain objet).
+- Roster: raider, raid group, class, spec, role, parse, Tier Presence, BiS Ratio, and Impact (sans gain objet).
 - Rerolls: alts and their main.
 - Présence: one row per raid, one column per raider (`1` present, `B` bench, `0` absent).
 - Raids: raid ID, instance, date, imported Warcraft Logs reports.

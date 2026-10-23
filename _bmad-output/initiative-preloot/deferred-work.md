@@ -38,3 +38,7 @@
 - source_plan: none
   summary: Remove the Rerolls concept everywhere (Rerolls tab, _Listes lookup, alt attendance credit in End raid, alt rejection in loot import, setup and archive checks, snapshot, tests); every character is a main.
   evidence: Split on 2026-10-23 from the owner's three-change request. Order agreed: third, after the lifetime-presence removal, since both edit the Roster schema, setup migration and snapshot. This closes the linked-mains item.
+
+- source_plan: `C:/Repos/preloot-agent/_bmad-output/initiative-preloot/plan-remove-lifetime-presence.md`
+  summary: Refine tickets 4.8 and 4.6 in epic-sheets-workbook/tickets.toml. In 4.8, drop the Impact Item Count carryover choice and the "archived raids count toward Lifetime Presence" wording and verify step. In 4.6, drop "Tier and Lifetime Presence" from the snapshot description.
+  evidence: Lifetime presence was removed on 2026-10-23 and both scores now fully reset at a new tier (epic outcomes 3 and 5 updated). Ticket files change only through bmad-ticket, so the build did not edit them.
