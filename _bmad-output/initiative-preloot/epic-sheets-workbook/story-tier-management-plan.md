@@ -3,7 +3,7 @@ title: 'Tier management (Nouveau palier)'
 type: 'feature'
 ticket: '8'
 created: '2026-10-23'
-status: 'built'
+status: done
 baseline_revision: 'a52b8a4e12222d46e00e52ef17c7d26d5dd3f541' # in C:/Repos/Gargul_Preloot (code repo)
 route: 'full'
 route_source: 'auto'

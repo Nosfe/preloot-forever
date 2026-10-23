@@ -3,7 +3,7 @@ title: 'Post-raid Custom-export import'
 type: 'feature'
 ticket: '7'
 created: '2026-10-22'
-status: 'built'
+status: done
 baseline_revision: 'c45b608750a3f668db885b9c683c886ef60d303a' # C:/Repos/Gargul_Preloot (code repo)
 route: 'full'
 route_source: 'auto'
