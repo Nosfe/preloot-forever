@@ -61,7 +61,7 @@ The Google Sheets workbook is the durable system of record. Its bound Apps Scrip
 
 - **Binds:** CAP-1, CAP-2, CAP-6, CAP-7
 - **Prevents:** Attendance and award records resolving to different Raiders because components silently normalize names differently.
-- **Rule:** Require unique, exact owner-maintained character-name strings as Raider keys in Sheets and both JSON handoffs; reject duplicate keys. Preserve casing and special characters. Award recipients come from Gargul's `@WINNER` export token, which Gargul already returns without the realm (assumed correct on WoW Forever); match it exactly against one roster key. Award recipients are never resolved through the Rerolls mapping (an award to an alt is rejected for owner correction). Reject unmatched or ambiguous awards; ignore unmatched Warcraft Logs participants for owner correction.
+- **Rule:** Require unique, exact owner-maintained character-name strings as Raider keys in Sheets and both JSON handoffs; reject duplicate keys. Preserve casing and special characters. Award recipients come from Gargul's `@WINNER` export token, which Gargul already returns without the realm (assumed correct on WoW Forever); match it exactly against one roster key. Every character is its own Roster raider (owner decision 2026-10-23); there is no alt mapping. Reject unmatched or ambiguous awards; ignore unmatched Warcraft Logs participants for owner correction.
 
 ### AD-4 — Award authority remains with the owner
 
@@ -85,7 +85,7 @@ The Google Sheets workbook is the durable system of record. Its bound Apps Scrip
 
 - **Binds:** CAP-2
 - **Prevents:** Shared-workbook viewers or committed code receiving API credentials, and attendance fetching occurring without an owner action.
-- **Rule:** The owner manually maintains parse inputs, pastes a public report link into Sheets for a scheduled raid instance, and invokes the bound Apps Script menu action. Use Warcraft Logs API v2 public-report client credentials stored in `PropertiesService.getUserProperties()`; never place secrets in workbook cells, JSON, shared `ScriptProperties`, or committed source. Each workbook `raidId` represents one scheduled raid instance and one possible-raid increment in both window maxima; attendance and bench credit each contribute at most once per Raider and `raidId`. List each imported report code in the raid's Raids row (Rapports WCL), merge overlapping reports into the same attendance event without another denominator increment, and treat a code already listed as a no-op. Evaluate attendance once per `raidId` and resolved roster key: count the distinct completed boss-encounter fights (kills and wipes) across all merged reports, and credit the Raider when the main or any Rerolls alt took part in strictly more than 25% of them (all completed fights when there is no boss encounter). An exact alt name listed in the workbook's Rerolls mapping credits its main's roster key for attendance only; reroll names must not duplicate roster keys. Serialize report checks, tier/BiS resets, and ledger commits; defer score-affecting input edits and attendance during an open raid. Commit the report code and the matched attendance (`1` in the raid's Présence row; the owner types `B` for bench) in one atomic workbook batch. If WCL data changes later, the owner corrects attendance manually; ignore unmatched participants.
+- **Rule:** The owner manually maintains parse inputs, pastes a public report link into Sheets for a scheduled raid instance, and invokes the bound Apps Script menu action. Use Warcraft Logs API v2 public-report client credentials stored in `PropertiesService.getUserProperties()`; never place secrets in workbook cells, JSON, shared `ScriptProperties`, or committed source. Each workbook `raidId` represents one scheduled raid instance and one possible-raid increment in both window maxima; attendance and bench credit each contribute at most once per Raider and `raidId`. List each imported report code in the raid's Raids row (Rapports WCL), merge overlapping reports into the same attendance event without another denominator increment, and treat a code already listed as a no-op. Evaluate attendance once per `raidId` and resolved roster key: count the distinct completed boss-encounter fights (kills and wipes) across all merged reports, and credit the Raider when that exact Roster character took part in strictly more than 25% of them (all completed fights when there is no boss encounter). Serialize report checks, tier/BiS resets, and ledger commits; defer score-affecting input edits and attendance during an open raid. Commit the report code and the matched attendance (`1` in the raid's Présence row; the owner types `B` for bench) in one atomic workbook batch. If WCL data changes later, the owner corrects attendance manually; ignore unmatched participants.
 
 ### AD-8 — Gargul state is session-only
 
@@ -126,8 +126,7 @@ Setup ("Set up / refresh workbook") creates and refreshes these tabs in this ord
 
 | Tab | Holds | Written by |
 | --- | --- | --- |
-| Roster | Raider, Classe, Spé, Rôle, Parse WCL moyen; formula columns from story 4.3 | Owner (formulas by setup) |
-| Rerolls | Reroll, Classe, Spé, Rôle, Parse WCL moyen, Personnage principal | Owner |
+| Roster | Raider, Groupe de raid, Classe, Spé, Rôle, Parse WCL moyen; formula columns from story 4.3 | Owner (formulas by setup) |
 | Présence | One row per raid, one column per raider: `1` present, `B` bench, `0` absent; Total row | Script (`1`), owner (`B`) |
 | Raids | Raid (ID), Instance, Date du raid, Rapports WCL, Importé le | Script |
 | Awards | One 5-column block per raider: Date, Objet, Objet (ID), Traitement, Raid (ID) | Script (ledger import) |
@@ -188,7 +187,7 @@ flowchart LR
 | CAP-2 — Attendance | Bound Apps Script, workbook inputs/formulas | AD-1, AD-2, AD-7 |
 | CAP-3 — BiS priority | Sheet formulas; companion display | AD-2, AD-3, AD-4 |
 | CAP-4 — Impact priority | Sheet formulas; companion display | AD-2, AD-4 |
-| CAP-5 — Raider-facing views | Read-only Roster (group, class, spec, role, parse, Tier Presence, BiS Ratio, Impact (sans gain objet)), Rerolls, Présence grid, Raids, Awards blocks, and one Objets tab per role (Statut and Gain per spec) in Sheets | AD-1, AD-2 |
+| CAP-5 — Raider-facing views | Read-only Roster (group, class, spec, role, parse, Tier Presence, BiS Ratio, Impact (sans gain objet)), Présence grid, Raids, Awards blocks, and one Objets tab per role (Statut and Gain per spec) in Sheets | AD-1, AD-2 |
 | CAP-6 — Manual Gargul awards | Gargul and companion addon | AD-4, AD-5, AD-8 |
 | CAP-7 — Pre/post-raid synchronization | Sheets, bound Apps Script, companion addon | AD-1, AD-3, AD-5, AD-6, AD-8 |
 | CAP-8 — Tier transitions and archives | Google Sheets and bound Apps Script | AD-1, AD-2 |

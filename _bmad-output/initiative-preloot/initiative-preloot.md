@@ -20,7 +20,7 @@ The owner runs a WoW Forever raid from the new workbook and companion addon inst
 
 ## Done when
 
-1. The owner pastes a WoW Forever Warcraft Logs link into the new workbook, and that raid's attendance is credited: more than 25% of its boss fights, with Rerolls alts crediting their main.
+1. The owner pastes a WoW Forever Warcraft Logs link into the new workbook, and that raid's attendance is credited: more than 25% of its boss fights, for each exact Roster character.
 2. Raiders with view access see the Roster, Impact Items, and per-spec tabs with BiS Ratio and Impact Score breakdowns, and cannot edit them.
 3. Before a raid the owner loads the workbook snapshot into the companion on WoW Forever; during rolls each roller's BiS Ratio and Impact Score show and update before the next roll after each award.
 4. After the raid, one Gargul Custom export pasted into the workbook updates loot counts for exactly the awarded raiders according to each award's BIS, IMPACT, or NONE choice; a malformed export changes nothing.
@@ -33,7 +33,7 @@ Split by side: the workbook and its bound Apps Script first, then the Gargul com
 - Touch point: Warcraft Logs API v2 — public report attendance read; owner: epic-sheets-workbook
 - Touch point: Gargul v8.0.1 — roll table, award, importer and exporter hooks, and the export settings; owner: epic-raid-companion
 - Touch point: WoWSims Forever — the owner types each Raider's simulated gain into the workbook by hand, with no code; owner: epic-sheets-workbook
-- Touch point: the old workbook — read once to copy the roster and Rerolls; owner: epic-sheets-workbook
+- Touch point: the old workbook — read once to copy the roster; owner: epic-sheets-workbook
 
 ## References
 
@@ -46,7 +46,8 @@ Split by side: the workbook and its bound Apps Script first, then the Gargul com
 
 - Dropped: the PreLoot initiative content and its epics 1-3 (platform baseline, contested items, sim priority) and the item in deferred-work.md; the product was redefined as Sheets plus Gargul loot distribution (user's decision, 2026-10-21).
 - Decision: two epics, the workbook first, then the addon (2026-10-21).
-- Decision: start a new workbook and copy the roster and Rerolls from the old one (2026-10-21).
+- Decision: start a new workbook and copy the roster from the old one (2026-10-21).
+- Decision: every character is its own raider in Roster; no alt tab or alt-to-main mapping (2026-10-23).
 - Decision: switch over at once; the old addon and workbook are not kept running in parallel (2026-10-21).
 - Decision: no separate platform-baseline epic; each epic opens with its own setup stories (the workbook, script and credentials; the Forever TOC and loading on Gargul v8.0.1) (2026-10-21).
 - Decision: shared contracts live in the spine: Interchange v1 and the Gargul export template (governed by AD-6), the raid ID lifecycle (AD-6), identity (AD-3), the calculation contract (AD-2). epic-sheets-workbook owns any change to them and the shared fixtures (2026-10-21).

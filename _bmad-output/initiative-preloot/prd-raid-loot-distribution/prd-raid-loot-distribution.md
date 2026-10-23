@@ -81,7 +81,7 @@ The owner can provide a Warcraft Logs raid link so the system updates raid atten
 - At the BiS reset, Tier Presence starts a new window; Lifetime Presence continues across tiers.
 - Warcraft Logs participants that cannot be matched to a Raider are ignored; the owner can correct attendance in the JSON or Roster list.
 - A Raider counts as attending a raid only when present for strictly more than 25% of its completed boss fights (kills and wipes; all completed fights if the log has no boss).
-- An alt listed in the Rerolls sheet credits its main's attendance; awards to an alt are not credited to the main.
+- Every character is its own raider in Roster: attendance and awards count only for that exact character (2026-10-23).
 
 ### 4.2 Loot Priority and Score Transparency
 
@@ -123,7 +123,7 @@ The system lets the owner and raiders inspect the data contributing to an Impact
 
 ### 4.3 Raider-Facing Sheets
 
-Google Sheets is the MVP's shared view for the owner and Raiders: Roster, Rerolls, Présence, Raids, Awards, and one Objets tab per role. Raiders have view-only access; editing is restricted to the owner.
+Google Sheets is the MVP's shared view for the owner and Raiders: Roster, Présence, Raids, Awards, and one Objets tab per role. Raiders have view-only access; editing is restricted to the owner.
 
 #### FR-7: Publish roster state
 
@@ -215,7 +215,7 @@ The system rejects malformed or incomplete JSON imports without changing existin
 - Warcraft Logs raid-link attendance processing and manual bench entry.
 - BiS Ratio and Impact Score calculation and visibility.
 - Completed-tier archiving, with owner-controlled Impact Item Count carryover and the scheduled BiS Ratio reset.
-- Shared Sheets views: Roster, Rerolls, Présence, Raids, Awards, and the Objets tabs per role.
+- Shared Sheets views: Roster, Présence, Raids, Awards, and the Objets tabs per role.
 - Owner-only Lua/Gargul enhancement with pre-raid state import, live in-raid score/ratio display, manual award support, and post-raid results export.
 - JSON exchange between Sheets and the raid interface.
 

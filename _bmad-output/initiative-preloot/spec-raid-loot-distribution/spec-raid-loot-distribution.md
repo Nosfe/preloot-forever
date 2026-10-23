@@ -23,7 +23,7 @@ The guild owner needs a consistent, inspectable way to maintain loot priorities 
   - **success:** The roster persists across tiers, one tier is active at a time, and the owner can configure all required inputs for that tier.
 - **CAP-2 — Process attendance**
   - **intent:** The owner updates raid attendance from Warcraft Logs and enters bench appearances manually.
-  - **success:** Matched attendance and bench (B) produce Tier Presence (since the tier start); unmatched players are ignored and can be corrected manually. Attendance requires presence for more than 25% of a raid's boss fights; Rerolls alts credit their main's attendance.
+  - **success:** Matched attendance and bench (B) produce Tier Presence (since the tier start); unmatched players are ignored and can be corrected manually. Attendance requires presence for more than 25% of a raid's boss fights by that exact Roster character.
 - **CAP-3 — Prioritize BiS awards**
   - **intent:** The owner uses BiS eligibility and BiS Ratio to guide BiS awards.
   - **success:** Any rolling BiS-eligible Raider outranks non-BiS rollers; eligible Raiders rank by BiS Ratio, with exact ties resolved manually using Gargul's roll value.
@@ -50,7 +50,7 @@ The guild owner needs a consistent, inspectable way to maintain loot priorities 
 - Gargul displays roll type/value, BiS Ratio, and Impact Score. It reads the owner's Statut and gain from the snapshot but never classifies items, chooses which signal applies, or assigns loot. The owner decides every award.
 - BiS Ratio and Impact Score both use Tier Presence (since the tier start); lifetime presence was removed on 2026-10-23. Presence Max initializes to `1` when a window has no possible raids.
 - The owner imports each raid once and manually corrects JSON. Malformed JSON is rejected without changing existing data; duplicate-upload detection is not required.
-- Raiders are identified by their exact, unique roster character name, without case-folding; awards to Rerolls alts are rejected for owner correction.
+- Raiders are identified by their exact, unique roster character name, without case-folding; an award to a name not in Roster is rejected for owner correction.
 - Off-spec and disenchanted awards never change loot counts; the owner marks pattern/design awards NONE.
 - Sheet values affecting scores stay fixed while a raid snapshot is open.
 - Warcraft Logs credentials stay in the owner's Apps Script User Properties, never in the shared workbook.

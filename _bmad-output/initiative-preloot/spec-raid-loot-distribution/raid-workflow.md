@@ -2,12 +2,11 @@
 
 ## Sheets
 
-The owner manually maintains the roster (class, spec, role, parse), Rerolls, and, per item, one Statut and Gain (%) for each spec on the Objets tabs. Warcraft Logs raid links write `1` for matched attendance in the raid's row of the Présence tab; the owner types `B` for bench. Unmatched participants are ignored and can be corrected by the owner. A Raider counts as attending only when present for strictly more than 25% of the raid's completed boss fights (kills and wipes); an alt listed in the Rerolls sheet credits its main's attendance but never its loot.
+The owner manually maintains the roster (raid group, class, spec, role, parse) and, per item, one Statut and Gain (%) for each spec on the Objets tabs. Warcraft Logs raid links write `1` for matched attendance in the raid's row of the Présence tab; the owner types `B` for bench. Unmatched participants are ignored and can be corrected by the owner. A Raider counts as attending only when present for strictly more than 25% of the raid's completed boss fights (kills and wipes); every character is its own Roster raider.
 
 Raiders receive view-only access to the workbook:
 
 - Roster: raider, raid group, class, spec, role, parse, Tier Presence, BiS Ratio, and Impact (sans gain objet).
-- Rerolls: alts and their main.
 - Présence: one row per raid, one column per raider (`1` present, `B` bench, `0` absent).
 - Raids: raid ID, instance, date, imported Warcraft Logs reports.
 - Awards: one block per raider listing their loot and its treatment.

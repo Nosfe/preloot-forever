@@ -7,7 +7,7 @@ Owner's repo `github.com/zambelaba/Gargul_Preloot` (local clone `C:/Repos/Gargul
 | Part | Files | Does today |
 | --- | --- | --- |
 | Addon | `Core.lua`, `Gargul_Preloot.toc` | Depends on Gargul. Adds a ratio column to the master-looter roll table, a "Preloot (Base64)" importer button, and increments loot count on epic non-OS awards. Saves data in `GargulPrelootDB`. Appends the new ratio to Gargul's award chat announcement, in French. |
-| Apps Script | `tools/google_apps_script/attendance.js` | WCL v2 report fetch, attendance >25% of completed boss pulls, Rerolls alt-to-main mapping, `presence_details` sheet, document lock. |
+| Apps Script | `tools/google_apps_script/attendance.js` | WCL v2 report fetch, attendance >25% of completed boss pulls, `presence_details` sheet, document lock. |
 | Apps Script | `tools/google_apps_script/ratio.js` | Writes Base64 roster JSON for the addon; parses RCLC and Gargul exports into `loot_details` and loot counts. |
 | Local tooling | `generate_raid_json.ps1`, `run_local.cmd`, `.env.example`, `raid_ids.csv` | Offline WCL attendance JSON generator with self-test. |
 | Tests | `presence_test_runner.html`, `test_runner.html` | Browser runners for presence and attendance logic. |
@@ -15,7 +15,7 @@ Owner's repo `github.com/zambelaba/Gargul_Preloot` (local clone `C:/Repos/Gargul
 ## Keep
 
 - Gargul-dependent addon structure, importer button and master-looter table hooks.
-- WCL fetch, the >25% boss-pull threshold, Rerolls attendance crediting, the document lock.
+- WCL fetch, the >25% boss-pull threshold, the document lock.
 - The ratio line appended to Gargul's award chat announcement, unchanged (French).
 - Gargul-format award import idea, replaced by the Custom export template from the architecture spine.
 
