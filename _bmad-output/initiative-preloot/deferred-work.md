@@ -47,3 +47,4 @@
 - source_plan: `C:/Repos/preloot-agent/_bmad-output/initiative-preloot/epic-raid-companion/story-custom-export-fill-plan.md`
   summary: The workbook's Gargul import (ledger.js parseGargulExport_ / attendance.js submitEndRaid) ignores each line's raidId and files every award under Config's open raid; per AD-6 and the 4.7 entry, a raidId other than the open raid (empty or literal @GPRAID included) must be rejected and listed.
   evidence: Found in the 5.3 review (high if a raid's export includes older awards; Gargul exports all AwardHistory unless dates are selected). parseGargulExport_ never reads parsed.raidId, and buildAwardRequests_ is called with openRaidId. Natural home: story 4.9 (accept the real Gargul export; fix parser gaps) or a small fix before it.
+  status: RESOLVED 2026-10-26 by plan-gargul-import-raid-id-check.md (strict AD-6 check in the End raid preview and submit).
