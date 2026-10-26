@@ -43,3 +43,7 @@
   summary: Refine tickets 4.8 and 4.6 in epic-sheets-workbook/tickets.toml. In 4.8, drop the Impact Item Count carryover choice and the "archived raids count toward Lifetime Presence" wording and verify step. In 4.6, drop "Tier and Lifetime Presence" from the snapshot description.
   evidence: Lifetime presence was removed on 2026-10-23 and both scores now fully reset at a new tier (epic outcomes 3 and 5 updated). Ticket files change only through bmad-ticket, so the build did not edit them.
   status: RESOLVED 2026-10-23. Entries 4.6 and 4.8 in epic-sheets-workbook/tickets.toml were refined (no lifetime presence; no Impact carryover; Début du palier and Raid en cours labels).
+
+- source_plan: `C:/Repos/preloot-agent/_bmad-output/initiative-preloot/epic-raid-companion/story-custom-export-fill-plan.md`
+  summary: The workbook's Gargul import (ledger.js parseGargulExport_ / attendance.js submitEndRaid) ignores each line's raidId and files every award under Config's open raid; per AD-6 and the 4.7 entry, a raidId other than the open raid (empty or literal @GPRAID included) must be rejected and listed.
+  evidence: Found in the 5.3 review (high if a raid's export includes older awards; Gargul exports all AwardHistory unless dates are selected). parseGargulExport_ never reads parsed.raidId, and buildAwardRequests_ is called with openRaidId. Natural home: story 4.9 (accept the real Gargul export; fix parser gaps) or a small fix before it.
