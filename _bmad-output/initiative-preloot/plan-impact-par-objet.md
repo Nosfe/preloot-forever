@@ -66,6 +66,10 @@ Owner decisions (2026-11-02):
 - Addon refuses snapshots that miss a score for an eligible raider, or carry one for a tank / non-IMPACT spec / unknown raider.
 - Tests: workbook pages PASS (story-4-3 117, 4-6 105, others unchanged); addon 395 assertions.
 
+## Plan Change Log
+
+- 2026-11-02 (owner): Impact = (Présence palier / Nombre de raids du palier) × parse × gain / (Loots Impact + 1), gain in **raw DPS** (no longer a %). Objets/archives show `Gain (DPS)` with one decimal, green rule for a positive gain; snapshot field `gainDps` replaces `gainFraction`; `impactScore_`/`Scores.impactScore` compute the score directly (no separate base); fixtures and Anniversary kit in DPS. Existing gains typed as % must be re-entered in DPS.
+
 ## Review Triage Log
 
 Quick review (1 adversarial reviewer), 2026-11-02:
