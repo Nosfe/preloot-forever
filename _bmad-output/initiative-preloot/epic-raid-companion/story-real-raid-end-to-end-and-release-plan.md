@@ -18,7 +18,7 @@ The owner runs the whole loop once in game: workbook snapshot, companion in Garg
 
 **Préparation**
 1. Copier le dossier `Gargul_Preloot/Gargul_Preloot` dans `Interface/AddOns` (remplace l'ancienne 1.1.0).
-2. Classeur : Configuration > Rafraîchir le classeur ; Roster rempli ; Configuration > Afficher le format d'export Gargul, coller la ligne dans Gargul (Export loot > Custom, décocher offspec et disenchanted).
+2. Classeur : Configuration > Rafraîchir le classeur ; Roster rempli ; Config *Version Wowhead* = `TBC` et *Serveur WCL* renseigné ; Configuration > Afficher le format d'export Gargul, coller la ligne dans Gargul (Export loot > Custom, décocher offspec et disenchanted).
 
 **Chargement (5.1)**
 3. L'addon apparaît et se charge avec Gargul, sans « périmé ». Une ligne `[Preloot]` résume les fonctions installées.
@@ -36,6 +36,10 @@ The owner runs the whole loop once in game: workbook snapshot, companion in Garg
 11. Gargul Export loot (Custom) : chaque ligne a `raidId` et `treatment` remplis ; une attribution faite avant l'import du snapshot sort avec des valeurs vides.
 12. Classeur : Raid > Terminer avec le lien WCL et l'export ; la prévisualisation montre les traitements ; les loots arrivent dans Awards.
 13. M'envoyer : l'export Custom complet (texte) et le résultat de Terminer (message), plus tout écart constaté.
+
+**Portail raiders**
+14. Avant le raid : Mon personnage (rangs Impact, lien Warcraft Logs, bouton Armory) ; Classement Impact, objet choisi : le détail du calcul correspond au classeur ; infobulle Wowhead au survol d'un objet.
+15. Après Terminer, recharger le portail (cache d'une minute) : les loots du raid apparaissent dans Loots et Mon personnage, l'objet reçu sort du Classement Impact du gagnant.
 
 ## After the owner's run
 
