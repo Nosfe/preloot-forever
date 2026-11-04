@@ -63,7 +63,7 @@ The owner can create and update Raiders in the single Roster, including raider n
 
 #### FR-2: Configure phase data
 
-The owner can configure, per item and per spec, a Statut (BIS, IMPACT, CLASS_BOUND, or ALT) and a simulated Gain (%), on one Objets tab per role.
+The owner can configure, per item and per spec, a Statut (IMPACT, BIS, CLASS_BOUND, or ALT) and a simulated Gain (%), on one Objets tab per role.
 
 **Consequences (testable):**
 - The owner can add and revise item data for each Phase without automated source retrieval.
@@ -139,7 +139,7 @@ The owner can share one Objets tab per role (Tank, Heal, Melee DPS, Ranged DPS, 
 
 **Consequences (testable):**
 - Each Objets tab has a row per item and a Statut and Gain (%) pair per spec of its role.
-- Statut distinguishes BIS, IMPACT, CLASS_BOUND, and ALT; one item can have different Statuts for different specs.
+- Statut distinguishes IMPACT, BIS, CLASS_BOUND, and ALT; one item can have different Statuts for different specs.
 - Raiders can view every tab but cannot edit it; only the owner can edit the workbook.
 
 ### 4.4 Raid-Night Award Workflow

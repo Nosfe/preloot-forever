@@ -28,7 +28,7 @@ Any BiS-eligible Raider who rolls outranks every non-BiS roller regardless of ra
 
 ## Other Item Categories
 
-- Each item has one Statut per spec: `BIS`, `IMPACT`, `CLASS_BOUND`, or `ALT`.
+- Each item has one Statut per spec: `IMPACT`, `BIS`, `CLASS_BOUND`, or `ALT`.
 - Class-Bound items, tier set pieces included, are rolled among eligible classes. There is no tank priority.
 - Rare class-priority exceptions are handled manually and are not encoded in the product.
 - Off-spec and disenchanted awards never change BiS or Impact loot counts. The owner marks pattern/design awards `NONE`.

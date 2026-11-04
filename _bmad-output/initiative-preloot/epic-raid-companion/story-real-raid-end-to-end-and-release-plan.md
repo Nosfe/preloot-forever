@@ -28,7 +28,7 @@ The owner runs the whole loop once in game: workbook snapshot, companion in Garg
 **Rolls et attributions (5.2, 5.5, 5.6)**
 6. Un roll : colonnes Preloot après les 10 colonnes Gargul ; Ratio BiS identique au Roster.
 7. Objet avec Statut IMPACT pour certaines spés : Impact affiché pour ces rollers seulement, vide pour les tanks.
-8. Attribuer : la fenêtre de traitement s'ouvre, préremplie depuis le Statut ; choisir BIS/IMPACT/CLASS_BOUND/ALT ; le type de roll reste enregistré.
+8. Attribuer : la fenêtre de traitement s'ouvre, préremplie depuis le Statut ; choisir IMPACT/BIS/CLASS_BOUND/ALT ; le type de roll reste enregistré.
 9. Deux attributions de suite : les colonnes se mettent à jour avant le roll suivant ; la ligne de chat apparaît pour BIS et IMPACT seulement.
 10. Changer le traitement, changer le gagnant, supprimer une attribution : `/preloot list` suit chaque étape.
 
